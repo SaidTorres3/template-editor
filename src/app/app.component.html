@@ -1,23 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="box-sizing: border-box;">
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-
-<body style="height: 100vh;">
-  <input #template type="file" id="template" name="template" accept=".docx">
-  <button (click)="onSave()">Save</button>
-
-  <div #paper class="paper">
-    <div *ngIf="phrases.length > 0"></div>
-    <span *ngFor="let phrase of phrases; let index = index" [contentEditable]="true" (input)="onSpanChange($event, index)">
-      {{phrase.value}}
-    </span>
+<body>
+  <div class="header">
+    <div class="header__element header__element--file" (click)="uploadFileInput.click()">
+      <input #uploadFileInput class="invisible" type="file" id="template" name="template" accept=".docx">
+      <label>Archivo</label>
+    </div>
+    <div class="header__element header__element--title">
+      <button (click)="save()">Save</button>
+    </div>
+    <div class="header__element">
+      Ultima modificación: 07/12/2021 10:52 A.M
+    </div>
   </div>
+
+  <div class="workspace">
+    <div #dataContainer class="workspace__data-container">
+      <div class="workspace__data-container__data">
+        <p *ngFor="let i of [].constructor(50)">data.lorem.ipsum.dolor.sit.amet</p>
+      </div>
+      <div #grabableBarData class="workspace__data-container__grabable-bar"></div>
+    </div>
+
+    <div class="workspace__paper-container">
+      <div #paper class="workspace__paper-container__paper">
+        <div *ngIf="phrases.length > 0">
+          <span *ngFor="let phrase of phrases; let index = index" [contentEditable]="true"
+            (input)="updateTextFromLabel($event, index)">
+            {{phrase.value}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

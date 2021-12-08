@@ -11,20 +11,21 @@ import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDoc
 })
 export class AppComponent {
   title = 'template-editor';
-  @ViewChild('template') templateInput: ElementRef<HTMLInputElement>;
-  @ViewChild('paper') paper: ElementRef<HTMLDivElement>;
+  @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
+  @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
+  @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
 
   public phrases: Phrase[] = [];
   public modifiedPhrases: Phrase[] = [];
   // check type
   private docxFile: InputFileFormat;
 
-  public onSpanChange(inputEvent: InputEvent, index: number) {
+  public updateTextFromLabel(inputEvent: InputEvent, index: number) {
     const target = inputEvent.target as HTMLSpanElement;
     this.modifiedPhrases[index].value = target.innerText;
   }
 
-  public onSave() {
+  public save() {
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
@@ -41,7 +42,39 @@ export class AppComponent {
   }
 
   ngAfterViewInit() {
-    const input = this.templateInput.nativeElement
+    this.onChangeFileInput()
+    this.onClickGrabableBarData()
+  }
+
+  private onClickGrabableBarData() {
+    const grabableBarData = this.grabableBarData.nativeElement
+
+    grabableBarData.onmousedown = (e) => {
+      const startX = e.clientX
+      const startWidth = this.dataContainer.nativeElement.clientWidth
+      window.onmousemove = (e) => {
+        const deltaX = e.clientX - startX
+        const newWidth = startWidth + deltaX
+        this.dataContainer.nativeElement.style.width = `${newWidth}px`
+
+        const onMouseUp = (e) => {
+          window.onmousemove = null
+          window.onmouseup = null
+        }
+
+        window.onmouseup = onMouseUp
+      }
+
+      window.onmouseup = (e) => {
+        window.onmousemove = null
+        window.onmouseup = null
+      }
+    }
+  }
+
+  private onChangeFileInput() {
+    // get the file content, parse it to editable objects, and set the phrases variables
+    const input = this.uploadFileInput.nativeElement
     input.onchange = (e) => {
       const reader = new FileReader();
       reader.onloadend = (e) => {
