@@ -10,9 +10,13 @@
 
 <body style="height: 100vh;">
   <input #template type="file" id="template" name="template" accept=".docx">
+  <button (click)="onSave()">Save</button>
 
   <div #paper class="paper">
-
+    <div *ngIf="phrases.length > 0"></div>
+    <span *ngFor="let phrase of phrases; let index = index" [contentEditable]="true" (input)="onSpanChange($event, index)">
+      {{phrase.value}}
+    </span>
   </div>
 </body>
 

@@ -5,10 +5,9 @@ import { EditableObjectToDocxOpts, InputFileFormat, Phrase, PhraseCoords } from 
 
 export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<InputFileFormat> => {
   return new Promise((resolve, reject) => {
-    const docxFile = fs.readFileSync(opts.fileIn);
     // unzip the file
     const zipHandler = new JSZip();
-    zipHandler.loadAsync(docxFile).then(function (zipContent) {
+    zipHandler.loadAsync(opts.fileIn).then(function (zipContent) {
       const file = zipContent.file("word/document.xml")
       if (!file) { reject(`An error ocurred attempting to enter to the load the file 'document.xml' in folder 'word' of the docx file.`); return }
 
@@ -36,8 +35,8 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
           const modifiedXML = new xml2js.Builder().buildObject(result)
           // replace 'file' variable with modifiedXML
           zipContent.file('word/document.xml', modifiedXML)
-          zipContent.generateAsync({ type: 'base64' }).then(function (outputFile) {
-            resolve(Buffer.from(outputFile, 'base64'))
+          zipContent.generateAsync({ type: 'blob' }).then(function (outputFile) {
+            resolve(outputFile)
           })
         });
       })

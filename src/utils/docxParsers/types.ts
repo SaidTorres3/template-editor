@@ -9,7 +9,7 @@ export interface Phrase {
 
 export interface EditableObjectToDocxOpts {
   modifiedObjects: Phrase[]
-  fileIn: Buffer,
+  fileIn: InputFileFormat,
 }
 
 export interface PhraseCoords {
@@ -18,8 +18,8 @@ export interface PhraseCoords {
 }
 
 export interface CreateTemplateOutputDiffVisualizerOpts {
-  template: Buffer,
-  output: Buffer,
+  template: InputFileFormat,
+  output: InputFileFormat,
   data: JSON | undefined,
 }
 
