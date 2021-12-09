@@ -1,4 +1,3 @@
-import fs from 'fs';
 import JSZip from 'jszip'
 import { parseString } from 'xml2js'
 import { InputFileFormat, Phrase } from './types';

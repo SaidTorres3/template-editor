@@ -12,6 +12,14 @@
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2015",
+    "paths": {
+      "stream": [
+        "./node_modules/stream-browserify"
+      ],
+      "timers": [
+        "./node_modules/timers-browserify"
+      ]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],

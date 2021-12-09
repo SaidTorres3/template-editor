@@ -1,9 +1,9 @@
 import fs from 'fs';
 import JSZip from 'jszip'
 import xml2js from 'xml2js'
-import { EditableObjectToDocxOpts, InputFileFormat, Phrase, PhraseCoords } from './types';
+import { EditableObjectToDocxOpts, Phrase, PhraseCoords } from './types';
 
-export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<InputFileFormat> => {
+export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     // unzip the file
     const zipHandler = new JSZip();
