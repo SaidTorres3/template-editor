@@ -3,12 +3,14 @@ import { docxToEditableObjects } from 'src/utils/docxParsers/docxToEditableObjec
 import { docxToString } from 'src/utils/docxParsers/docxToString';
 import { InputFileFormat, Phrase } from 'src/utils/docxParsers/types';
 import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDocx';
+import exampleObject from './exampleObject.json';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less']
 })
+
 export class AppComponent {
   title = 'template-editor';
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
@@ -19,6 +21,7 @@ export class AppComponent {
   public modifiedPhrases: Phrase[] = [];
   // check type
   private docxFile: InputFileFormat;
+  public objectData: any;
 
   public updateTextFromLabel(inputEvent: InputEvent, index: number) {
     const target = inputEvent.target as HTMLSpanElement;
@@ -39,6 +42,10 @@ export class AppComponent {
         console.log(string);
       });
     })
+  }
+
+  ngOnInit() {
+    this.objectData = exampleObject;
   }
 
   ngAfterViewInit() {

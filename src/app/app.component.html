@@ -18,7 +18,13 @@
   <div class="workspace">
     <div #dataContainer class="workspace__data-container">
       <div class="workspace__data-container__data">
-        <p *ngFor="let i of [].constructor(50)">data.lorem.ipsum.dolor.sit.amet</p>
+
+        <!-- <p *ngFor="let i of [].constructor(50)">data.lorem.ipsum.dolor.sit.amet</p> -->
+        
+        <div *ngIf="objectData">
+          <tree-node [node]="objectData"></tree-node>
+        </div>
+
       </div>
       <div #grabableBarData class="workspace__data-container__grabable-bar"></div>
     </div>

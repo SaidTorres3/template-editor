@@ -1,0 +1,11 @@
+<div *ngIf="node">
+  {{consoleLog(node | keyvalue)}}
+  <div #element *ngFor="let item of node | keyvalue" [ngStyle]="{'margin-left': tabulation+'px'}">
+    <div>
+      {{item.key}}
+    </div>
+    <div *ngIf="item.value | isObject">
+      <tree-node [node]="item.value" [tabulation]="tabulation+tabulationLenght"></tree-node>
+    </div>
+  </div>
+</div>

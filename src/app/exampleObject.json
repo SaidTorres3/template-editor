@@ -1,0 +1,438 @@
+{
+  "documento": {
+    "title": "Documento",
+    "type": "object",
+    "properties": {
+      "instrumento": {
+        "title": "Instrumento",
+        "type": "number"
+      },
+      "libro": {
+        "title": "Libro",
+        "type": "number"
+      },
+      "tomo": {
+        "title": "Tomo",
+        "type": "number"
+      },
+      "folioInicial": {
+        "title": "Folio Inicial",
+        "type": "number"
+      },
+      "folioFinal": {
+        "title": "Folio final",
+        "type": "number"
+      },
+      "fecha": {
+        "title": "Fecha",
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "required": [
+      "instrumento",
+      "libro",
+      "tomo",
+      "folioInicial",
+      "folioFinal",
+      "fecha"
+    ]
+  },
+  "notaria": {
+    "title": "Notaria",
+    "type": "object",
+    "properties": {
+      "notario": {
+        "title": "Notario",
+        "type": "string"
+      },
+      "numero": {
+        "title": "Número",
+        "type": "integer"
+      },
+      "demarcacion": {
+        "type": "string",
+        "title": "Demarcación"
+      },
+      "lugar": {
+        "title": "Lugar",
+        "type": "object",
+        "properties": {
+          "localidad": {
+            "type": "string",
+            "title": "Localidad"
+          },
+          "municipio": {
+            "type": "string",
+            "title": "Municipio"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          }
+        },
+        "required": [
+          "localidad",
+          "key1",
+          "key2",
+          "municipio",
+          "estado"
+        ]
+      }
+    },
+    "required": [
+      "notario",
+      "numero",
+      "key2",
+      "demarcacion",
+      "lugar"
+    ]
+  },
+  "partes": {
+    "title": "Partes",
+    "type": "object",
+    "properties": {
+      "testador": {
+        "title": "Testador",
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "sexo": {
+            "title": "Sexo",
+            "type": "string",
+            "enum": [
+              "H",
+              "M"
+            ]
+          },
+          "nacimiento": {
+            "title": "Nacimiento",
+            "type": "object",
+            "properties": {
+              "fecha": {
+                "title": "Fecha",
+                "type": "string",
+                "format": "date"
+              },
+              "key1": {
+                "title": "Lugar",
+                "type": "object",
+                "properties": {
+                  "localidad": {
+                    "type": "string",
+                    "title": "Localidad"
+                  },
+                  "municipio": {
+                    "type": "string",
+                    "title": "Municipio"
+                  },
+                  "estado": {
+                    "type": "string",
+                    "title": "Estado"
+                  }
+                },
+                "required": [
+                  "localidad",
+                  "municipio",
+                  "estado"
+                ]
+              }
+            },
+            "required": [
+              "fecha",
+              "lugar",
+              "estado",
+              "key1"
+            ]
+          },
+          "curp": {
+            "type": "string",
+            "title": "CURP",
+            "minLength": 18,
+            "maxLength": 18
+          },
+          "ocupacion": {
+            "type": "string",
+            "title": "Ocupación"
+          },
+          "donadorOrganos": {
+            "title": "¿Acepta ser donador de órganos?",
+            "type": "boolean"
+          },
+          "casado": {
+            "title": "¿Se encuentra casado/a?",
+            "type": "boolean"
+          },
+          "identificacion": {
+            "title": "Identificación",
+            "type": "object",
+            "properties": {
+              "numero": {
+                "title": "Número",
+                "type": "string"
+              },
+              "tipo": {
+                "type": "string",
+                "title": "Tipo de credencial"
+              },
+              "expide": {
+                "type": "string",
+                "title": "¿Qué institución la expide?"
+              }
+            },
+            "required": [
+              "tipo",
+              "expide",
+              "numero"
+            ]
+          },
+          "domicilio": {
+            "title": "Domicilio",
+            "type": "object",
+            "properties": {
+              "calle": {
+                "type": "string",
+                "title": "Calle"
+              },
+              "numero": {
+                "title": "Número",
+                "type": "integer"
+              },
+              "colonia": {
+                "type": "string",
+                "title": "Colonia"
+              },
+              "localidad": {
+                "type": "string",
+                "title": "Localidad"
+              },
+              "municipio": {
+                "type": "string",
+                "title": "Municipio"
+              },
+              "estado": {
+                "type": "string",
+                "title": "Estado"
+              }
+            },
+            "required": [
+              "calle",
+              "colonia",
+              "localidad",
+              "estado",
+              "municipio"
+            ]
+          }
+        },
+        "required": [
+          "nombre",
+          "sexo",
+          "nacimiento",
+          "curp",
+          "ocupacion",
+          "ocupacionf",
+          "donadorOrganos",
+          "casado",
+          "identificacion",
+          "domicilio"
+        ]
+      }
+    },
+    "required": [
+      "testador",
+      "key1"
+    ]
+  },
+  "padre": {
+    "title": "Padre",
+    "type": "object",
+    "properties": {
+      "existe": {
+        "title": "¿El testador tiene o tuvo padre?",
+        "description": "",
+        "type": "boolean"
+      },
+      "nombre": {
+        "type": "string",
+        "title": "Nombre del padre"
+      },
+      "vivo": {
+        "title": "¿El padre se encuentra aún vivo?",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "existe"
+    ]
+  },
+  "madre": {
+    "title": "Madre",
+    "type": "object",
+    "properties": {
+      "existe": {
+        "title": "¿El testador tiene o tuvo madre?",
+        "type": "boolean"
+      },
+      "nombre": {
+        "type": "string",
+        "title": "Nombre de la madre"
+      },
+      "vive": {
+        "title": "¿La madre se encuentra aún viva?",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "existe"
+    ]
+  },
+  "matrimonios": {
+    "title": "Matrimonios",
+    "type": "array",
+    "items": {
+      "title": "Matrimonio",
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "title": "Nombre"
+        },
+        "sexo": {
+          "title": "Sexo",
+          "type": "string",
+          "enum": [
+            "H",
+            "M"
+          ]
+        },
+        "vivo": {
+          "title": "¿La persona sigue viva?",
+          "type": "boolean"
+        },
+        "regimen": {
+          "type": "string",
+          "title": "¿En qué régimen se casaron?"
+        },
+        "actual": {
+          "title": "¿Es la actual matrimonio del testador?",
+          "type": "boolean"
+        },
+        "acta": {
+          "title": "Acta matrimonial",
+          "type": "object",
+          "properties": {
+            "presente": {
+              "title": "¿Cuenta con su acta matrimonial presente?",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "presente"
+          ]
+        },
+        "hijos": {
+          "title": "Hijos",
+          "type": "array",
+          "items": {
+            "title": "Hijo",
+            "type": "object",
+            "properties": {
+              "nombre": {
+                "type": "string",
+                "title": "Nombre"
+              },
+              "sexo": {
+                "title": "Sexo",
+                "type": "string",
+                "enum": [
+                  "H",
+                  "M"
+                ]
+              },
+              "vivo": {
+                "title": "¿La persona aún está viva?",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "nombre",
+              "sexo",
+              "vivo"
+            ]
+          }
+        }
+      },
+      "required": [
+        "sexo",
+        "nombre",
+        "regimen",
+        "vivo",
+        "acta",
+        "actual"
+      ]
+    }
+  },
+  "herederos": {
+    "title": "Herederos",
+    "type": "array",
+    "items": {
+      "title": "Heredero",
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "title": "Nombre"
+        },
+        "sexo": {
+          "title": "Sexo",
+          "type": "string",
+          "enum": [
+            "H",
+            "M"
+          ]
+        },
+        "porcentaje": {
+          "type": "string",
+          "title": "Porcentaje que se lleva el heredero",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "nombre",
+        "sexo",
+        "porcentaje"
+      ]
+    },
+    "minItems": 1
+  },
+  "albaceas": {
+    "title": "Albaceas",
+    "type": "array",
+    "items": {
+      "title": "Albacea",
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "title": "Nombre"
+        },
+        "sexo": {
+          "title": "Sexo",
+          "type": "string",
+          "enum": [
+            "H",
+            "M"
+          ]
+        }
+      },
+      "required": [
+        "nombre",
+        "sexo"
+      ]
+    },
+    "minItems": 1
+  }
+}
