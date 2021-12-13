@@ -7,7 +7,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 })
 export class TreeNodeComponent {
 
-  @Input() node;
+  @Input() node: any;
   @Input() tabulation: number;
   public tabulationLenght: number = 12
 

@@ -3,33 +3,34 @@
 
 <body>
   <div class="header">
-    <div class="header__element header__element--file" (click)="uploadFileInput.click()">
-      <input #uploadFileInput class="invisible" type="file" id="template" name="template" accept=".docx">
+    <input #uploadFileInput class="invisible" type="file" id="template" name="template" accept=".docx">
+    <div *ngIf="workspace.fileDropDown" class="header__element__dropdown">
+      <p class="header__element__dropdown__item" (click)="save()">Guardar</p>
+      <p class="header__element__dropdown__item" (click)="uploadFileInput.click()">Abrir template</p>
+    </div>
+    <div class="header__element header__element--file" (click)="fileDropDownToggle()">
       <label>Archivo</label>
     </div>
     <div class="header__element header__element--title">
-      <button (click)="save()">Save</button>
+      {{docxFile.name}}
     </div>
-    <div class="header__element">
-      Última modificación: 07/12/2021 10:52 A.M
+    <div class="header__element" *ngIf="docxFile.lastModifiedDate">
+      <!-- date with hour -->
+      Última modificación: {{docxFile.lastModifiedDate | date: 'dd/MM/yyyy HH:mm'}}
     </div>
   </div>
 
   <div class="workspace">
     <div #dataContainer class="workspace__data-container">
-      <div class="workspace__data-container__data">
-
-        <!-- <p *ngFor="let i of [].constructor(50)">data.lorem.ipsum.dolor.sit.amet</p> -->
-        
+      <div class="workspace__data-container__data" [ngStyle]="{'zoom': workspace.dataZoom.value}">
         <div *ngIf="objectData">
           <tree-node [node]="objectData"></tree-node>
         </div>
-
       </div>
       <div #grabableBarData class="workspace__data-container__grabable-bar"></div>
     </div>
 
-    <div class="workspace__paper-container">
+    <div #paperContainer class="workspace__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
       <div #paper class="workspace__paper-container__paper">
         <div *ngIf="phrases.length > 0">
           <span *ngFor="let phrase of phrases; let index = index" [contentEditable]="true"
@@ -40,6 +41,31 @@
       </div>
     </div>
   </div>
+  <footer class="status-bar">
+    <div class="status-bar__zoom-container">
+      <div class="status-bar__zoom-container__element" (click)="zoomOut(workspace.dataZoom)">
+        -
+      </div>
+      <div class="status-bar__zoom-container__element" (click)="zoomNormal(workspace.dataZoom)">
+        {{workspace.dataZoom.value * 100 | number}}%
+      </div>
+      <div class="status-bar__zoom-container__element" (click)="zoomIn(workspace.dataZoom)">
+        +
+      </div>
+    </div>
+
+    <div class="status-bar__zoom-container status-bar__zoom-container--right">
+      <div class="status-bar__zoom-container__element" (click)="zoomOut(workspace.paperZoom)">
+        -
+      </div>
+      <div class="status-bar__zoom-container__element" (click)="zoomNormal(workspace.paperZoom)">
+        {{workspace.paperZoom.value * 100 | number}}%
+      </div>
+      <div class="status-bar__zoom-container__element" (click)="zoomIn(workspace.paperZoom)">
+        +
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>

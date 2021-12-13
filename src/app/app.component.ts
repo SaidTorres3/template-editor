@@ -16,12 +16,26 @@ export class AppComponent {
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('paperContainer') paperContainer: ElementRef<HTMLDivElement>;
 
   public phrases: Phrase[] = [];
   public modifiedPhrases: Phrase[] = [];
-  // check type
-  private docxFile: InputFileFormat;
+
   public objectData: any;
+
+  public workspace = {
+    fileDropDown: false,
+    fileDropDownToggle: this.fileDropDownToggle,
+
+    paperZoom: { value: 1 },
+    dataZoom: { value: 1 },
+  }
+
+  public docxFile: DocxFile = {
+    content: "",
+    name: "",
+    lastModifiedDate: 0
+  }
 
   public updateTextFromLabel(inputEvent: InputEvent, index: number) {
     const target = inputEvent.target as HTMLSpanElement;
@@ -29,11 +43,11 @@ export class AppComponent {
   }
 
   public save() {
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
       link.href = url
-      link.download = 'newFile.docx'
+      link.download = this.docxFile.name
       link.click()
       link.remove()
       URL.revokeObjectURL(url)
@@ -49,11 +63,13 @@ export class AppComponent {
   }
 
   ngAfterViewInit() {
-    this.onChangeFileInput()
-    this.onClickGrabableBarData()
+    this.fileInputListener()
+    this.clickOnGrabableBarDataListener()
+    this.zoomInContainerListener(this.paperContainer, this.workspace.paperZoom)
+    this.zoomInContainerListener(this.dataContainer, this.workspace.dataZoom)
   }
 
-  private onClickGrabableBarData() {
+  private clickOnGrabableBarDataListener() {
     const grabableBarData = this.grabableBarData.nativeElement
 
     grabableBarData.onmousedown = (e) => {
@@ -63,12 +79,10 @@ export class AppComponent {
         const deltaX = e.clientX - startX
         const newWidth = startWidth + deltaX
         this.dataContainer.nativeElement.style.width = `${newWidth}px`
-
         const onMouseUp = (e) => {
           window.onmousemove = null
           window.onmouseup = null
         }
-
         window.onmouseup = onMouseUp
       }
 
@@ -79,14 +93,17 @@ export class AppComponent {
     }
   }
 
-  private onChangeFileInput() {
+  private fileInputListener() {
     // get the file content, parse it to editable objects, and set the phrases variables
     const input = this.uploadFileInput.nativeElement
     input.onchange = (e) => {
       const reader = new FileReader();
       reader.onloadend = (e) => {
         const data = e.target.result
-        this.docxFile = data
+        this.docxFile.name = input.files[0].name
+        // set last modification date from the file
+        this.docxFile.lastModifiedDate = input.files[0].lastModified
+        this.docxFile.content = data
         docxToEditableObjects(data).then((editableObjects) => {
           this.phrases = editableObjects.map(a => ({ ...a }));
           this.modifiedPhrases = editableObjects.map(a => ({ ...a }));
@@ -95,4 +112,52 @@ export class AppComponent {
       reader.readAsArrayBuffer(input.files[0])
     }
   }
+
+  private zoomInContainerListener(divListener: ElementRef<HTMLDivElement>, zoomRef: { value: number }) {
+    const container = divListener.nativeElement
+    // add event lister when ctrl + scroll up
+    container.onwheel = (e) => {
+      if (e.ctrlKey) {
+        e.preventDefault()
+        const delta = e.deltaY
+        if (delta < 0) {
+          this.zoomIn(zoomRef)
+        } else {
+          this.zoomOut(zoomRef)
+        }
+      }
+    }
+  }
+
+  public zoomIn(zoomRef: { value: number }) {
+    zoomRef.value < 2 ? zoomRef.value += 0.1 : undefined
+  }
+
+  public zoomOut(zoomRef: { value: number }) {
+    zoomRef.value > 0.11 ? zoomRef.value -= 0.1 : undefined
+  }
+
+  public zoomNormal(zoomRef: { value: number }) {
+    zoomRef.value = 1
+  }
+
+  public fileDropDownToggle() {
+    this.workspace.fileDropDown = true
+    let clickCount = 0;
+    const quitDropDown = (e) => {
+      clickCount++
+      if (clickCount > 1) {
+        this.workspace.fileDropDown = false
+        window.onclick = null
+        console.log("testing")
+      }
+    }
+    window.onclick = quitDropDown
+  }
+}
+
+interface DocxFile {
+  name: string,
+  lastModifiedDate: number,
+  content: InputFileFormat,
 }
