@@ -33,10 +33,12 @@
     <div #paperContainer class="workspace__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
       <div #paper class="workspace__paper-container__paper">
         <div *ngIf="phrases.length > 0">
-          <span *ngFor="let phrase of phrases; let index = index" [contentEditable]="true"
-            (input)="updateTextFromLabel($event, index)">
-            {{phrase.value}}
-          </span>
+          <span
+            *ngFor="let phrase of phrases; let index = index"
+            class="workspace__paper-container__paper__phrase"
+            [contentEditable]="true"
+            (input)="updateTextFromLabel($event, index)"
+            ><br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />{{phrase.value === '\r\n' ? undefined : phrase.value}}</span>
         </div>
       </div>
     </div>

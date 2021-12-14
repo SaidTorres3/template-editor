@@ -17,10 +17,15 @@ export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<
         parseString(XMLContent, function (err, result) {
           const paragraphs = result['w:document']['w:body'][0]['w:p']
           const enter = '\r\n'
+          let phrase: Phrase
 
           paragraphs.forEach((paragraph: { [x: string]: { [x: string]: any[]; }[]; }, paragraphIndex: number) => {
+
             const wRLabels = paragraph['w:r']
-            if (!wRLabels || !wRLabels.length) { return }
+            if (!wRLabels || !wRLabels.length) { 
+              phrase = { value: enter, paragraphIndex, sentenseIndex: 0 }
+              phrases.push(phrase)
+             } else {	
             wRLabels.forEach((wRLabel: { [x: string]: any[]; }, wRLabelIndex) => {
               let text: string = '';
               const WTLabel = wRLabel['w:t']
@@ -34,10 +39,11 @@ export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<
                   text = " "
                 }
               }
-              const phrase: Phrase = { value: text, paragraphIndex, sentenseIndex: wRLabelIndex }
+              phrase = { value: text, paragraphIndex, sentenseIndex: wRLabelIndex }
               phrases.push(phrase)
-              console.log(phrase)
             })
+          }
+
           })
 
           resolve(phrases)

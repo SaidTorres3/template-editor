@@ -3,8 +3,8 @@
     <div>
       {{item.value.title}}
     </div>
-    <div *ngIf="item.value | isObject">
+    <ng-container *ngIf="item.value | isObject">
       <tree-node [node]="item.value" [tabulation]="tabulation+tabulationLenght"></tree-node>
-    </div>
+    </ng-container>
   </div>
 </div>

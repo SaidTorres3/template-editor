@@ -149,7 +149,6 @@ export class AppComponent {
       if (clickCount > 1) {
         this.workspace.fileDropDown = false
         window.onclick = null
-        console.log("testing")
       }
     }
     window.onclick = quitDropDown
