@@ -153,6 +153,12 @@ export class AppComponent {
     }
     window.onclick = quitDropDown
   }
+
+  public enterListener(e: KeyboardEvent) {
+    if (e.key === "Enter") {
+      e.preventDefault()
+    }
+  }
 }
 
 interface DocxFile {
