@@ -1,10 +1,10 @@
 <div *ngIf="node">
   <div #element *ngFor="let item of node | keyvalue" [ngStyle]="{'margin-left': tabulation+'px'}">
-    <div>
+    <div *ngIf="item.value.title">
       {{item.value.title}}
     </div>
     <ng-container *ngIf="item.value | isObject">
-      <tree-node [node]="item.value" [tabulation]="tabulation+tabulationLenght"></tree-node>
+      <tree-node [node]="item.value" [tabulation]="((item.value | hasTheseProps:'title':'type') ? tabulationLenght : 0)"></tree-node>
     </ng-container>
   </div>
 </div>

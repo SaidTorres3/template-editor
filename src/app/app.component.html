@@ -40,6 +40,7 @@
               class="workspace__paper-container__paper__phrase"
               [contentEditable]="true"
               (input)="updateTextFromLabel($event, index)"
+              (paste)="onPaste($event)"
             >{{phrase.value}}</span>
           </ng-container>
         </div>

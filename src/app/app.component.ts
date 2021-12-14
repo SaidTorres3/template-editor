@@ -42,6 +42,10 @@ export class AppComponent {
     this.modifiedPhrases[index].value = target.innerText;
   }
 
+  public consolelog(arg: any) {
+    console.log(arg)
+  }
+
   public save() {
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
@@ -158,6 +162,14 @@ export class AppComponent {
     if (e.key === "Enter") {
       e.preventDefault()
     }
+  }
+
+  public onPaste(e: ClipboardEvent) {
+    e.preventDefault()
+    let text = e.clipboardData.getData("text/plain")
+    // remove enters of the space
+    text = text.replace(/\n/g, " ")
+    document.execCommand("insertText", false, text)
   }
 }
 

@@ -9,7 +9,7 @@ export class TreeNodeComponent {
 
   @Input() node: any;
   @Input() tabulation: number;
-  public tabulationLenght: number = 12
+  public tabulationLenght: number = 20
 
   ngOnInit() {
     if(this.tabulation == undefined) {
