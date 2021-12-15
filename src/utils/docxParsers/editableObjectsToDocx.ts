@@ -20,7 +20,6 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
             wRLabels.forEach((wRLabel: { [x: string]: any[]; }, wRLabelIndex) => {
               const modfiedPhrase = getModifiedPhare(opts.modifiedObjects, { paragraphIndex, sentenseIndex: wRLabelIndex })
               if (!modfiedPhrase) { return }
-              console.log('entered...')
               // check if WTLabel is an object and has the "_" property
               if (wRLabel['w:t'] && wRLabel['w:t'].length && wRLabel['w:t'][0]['_']) {
                 wRLabel['w:t'][0]['_'] = modfiedPhrase.value

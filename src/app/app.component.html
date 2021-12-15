@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" style="box-sizing: border-box;">
+<!-- <reference path="./app.component.less" />. -->
 
 <body>
   <div class="header">
@@ -30,19 +31,17 @@
       <div #grabableBarData class="workspace__data-container__grabable-bar"></div>
     </div>
 
-    <div #paperContainer class="workspace__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
-      <div #paper class="workspace__paper-container__paper" (keypress)="enterListener($event)">
-        <div *ngIf="phrases.length > 0">
-          <ng-container *ngFor="let phrase of phrases; let index = index">
-            <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-            <span
-              *ngIf="phrase.value!== '\r\n'"
-              class="workspace__paper-container__paper__phrase"
-              [contentEditable]="true"
-              (input)="updateTextFromLabel($event, index)"
-              (paste)="onPaste($event)"
-            >{{phrase.value}}</span>
-          </ng-container>
+    <div class="workspace__template">
+      <div #paperContainer class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
+        <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
+          <div *ngIf="phrases.length > 0">
+            <ng-container *ngFor="let phrase of phrases; let index = index">
+              <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
+              <span *ngIf="phrase.value!== '\r\n'" class="workspace__template__paper-container__paper__phrase"
+                [contentEditable]="true" (input)="updateTextFromLabel($event, index)"
+                (paste)="onPaste($event)">{{phrase.value}}</span>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
