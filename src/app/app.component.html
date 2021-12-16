@@ -7,6 +7,7 @@
     <input #uploadFileInput class="invisible" type="file" id="template" name="template" accept=".docx">
     <div *ngIf="workspace.fileDropDown" class="header__element__dropdown">
       <p class="header__element__dropdown__item" (click)="save()">Guardar</p>
+      <p class="header__element__dropdown__item" (click)="saveToComputer()">Guardar a computadora</p>
       <p class="header__element__dropdown__item" (click)="uploadFileInput.click()">Abrir template</p>
     </div>
     <div class="header__element header__element--file" (click)="fileDropDownToggle()">
@@ -31,15 +32,16 @@
       <div #grabableBarData class="workspace__data-container__grabable-bar"></div>
     </div>
 
-    <div class="workspace__template">
-      <div #paperContainer class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
+    <div #templateContainer class="workspace__template">
+      <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
         <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
           <div *ngIf="phrases.length > 0">
             <ng-container *ngFor="let phrase of phrases; let index = index">
               <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-              <span *ngIf="phrase.value!== '\r\n'" class="workspace__template__paper-container__paper__phrase"
+              <span *ngIf="phrase.value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
                 [contentEditable]="true" (input)="updateTextFromLabel($event, index)"
-                (paste)="onPaste($event)">{{phrase.value}}</span>
+                (paste)="onPaste($event)"
+                (drop)="onDrop($event)">{{phrase.value}}</span>
             </ng-container>
           </div>
         </div>

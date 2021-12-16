@@ -1,6 +1,10 @@
 <div *ngIf="node">
   <div #element *ngFor="let item of node | keyvalue" [ngStyle]="{'margin-left': tabulation+'px'}">
-    <div *ngIf="item.value.title">
+    <div 
+      *ngIf="item.value.title"
+      [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : undefined"
+      [draggable]="item.value.type | doesStringRepresentPrimitive"
+      >
       {{item.value.title}}
     </div>
     <ng-container *ngIf="item.value | isObject">

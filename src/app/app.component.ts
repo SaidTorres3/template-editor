@@ -16,7 +16,7 @@ export class AppComponent {
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
-  @ViewChild('paperContainer') paperContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
 
   public phrases: Phrase[] = [];
   public modifiedPhrases: Phrase[] = [];
@@ -48,6 +48,12 @@ export class AppComponent {
 
   public save() {
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
+      this.setTheDocument(newDocx)
+    })
+  }
+
+  public saveToComputer() {
+    editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
       link.href = url
@@ -69,7 +75,7 @@ export class AppComponent {
   ngAfterViewInit() {
     this.fileInputListener()
     this.clickOnGrabableBarDataListener()
-    this.zoomInContainerListener(this.paperContainer, this.workspace.paperZoom)
+    this.zoomInContainerListener(this.templateContainer, this.workspace.paperZoom)
     this.zoomInContainerListener(this.dataContainer, this.workspace.dataZoom)
   }
 
@@ -108,13 +114,17 @@ export class AppComponent {
         // set last modification date from the file
         this.docxFile.lastModifiedDate = input.files[0].lastModified
         this.docxFile.content = data
-        docxToEditableObjects(data).then((editableObjects) => {
-          this.phrases = editableObjects.map(a => ({ ...a }));
-          this.modifiedPhrases = editableObjects.map(a => ({ ...a }));
-        })
+        this.setTheDocument(data)
       }
       reader.readAsArrayBuffer(input.files[0])
     }
+  }
+
+  private setTheDocument(data: InputFileFormat) {
+    docxToEditableObjects(data).then((editableObjects) => {
+      this.phrases = editableObjects.map(a => ({ ...a }));
+      this.modifiedPhrases = editableObjects.map(a => ({ ...a }));
+    })
   }
 
   private zoomInContainerListener(divListener: ElementRef<HTMLDivElement>, zoomRef: { value: number }) {
@@ -166,10 +176,20 @@ export class AppComponent {
 
   public onPaste(e: ClipboardEvent) {
     e.preventDefault()
+    this.consolelog(e)
     let text = e.clipboardData.getData("text/plain")
     // remove enters of the space
     text = text.replace(/\n/g, " ")
     document.execCommand("insertText", false, text)
+  }
+
+  public onDrop(e: DragEvent) {
+    // if has html content, prevent default
+    if (e.dataTransfer.getData("text/html")) { e.preventDefault() }
+    // get plain text
+    const text = e.dataTransfer.getData("text/plain")
+    // if plain text contains like breaklines, prevent default
+    if (text.includes("\n")) { e.preventDefault() }
   }
 }
 

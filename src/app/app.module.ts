@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { isObject } from './pipes/isObject.pipe';
 import { TreeNodeComponent } from './shared/tree-node/tree-node.component';
 import { HasThesePropsPipe } from './pipes/has-these-props.pipe';
+import { DoesStringRepresentPrimitivePipe } from './pipes/does-string-represent-primitive.pipe';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { HasThesePropsPipe } from './pipes/has-these-props.pipe';
     isObject,
     TreeNodeComponent,
     HasThesePropsPipe,
+    DoesStringRepresentPrimitivePipe,
   ],
   imports: [
     BrowserModule
