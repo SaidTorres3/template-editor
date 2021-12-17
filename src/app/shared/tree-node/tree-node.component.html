@@ -1,14 +1,29 @@
-<div *ngIf="node">
-  <div #element *ngFor="let item of node | keyvalue" [ngStyle]="{'margin-left': tabulation+'px'}">
-    <div 
+<div #treeRoot *ngIf="node" (mouseenter)="setHovering(true)" (mouseleave)="setHovering(false)">
+  <div
+    #element *ngFor="let item of node | keyvalue, let i = index"
+    [ngStyle]="{'margin-left': tabulation+'px'}"
+    class="not-draggable"
+    (mouseover)="showRealPath($event, i)"
+    >
+    <a 
       *ngIf="item.value.title"
+      href={{item.value.title}}
+      (click)="$event.preventDefault()"
       [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : undefined"
       [draggable]="item.value.type | doesStringRepresentPrimitive"
+      contenteditable="false"
       >
-      {{item.value.title}}
-    </div>
+      {{
+        showRealValue && i==actualIndex && (item.value.type | doesStringRepresentPrimitive) && isHovering? 
+          showPath(item) : (item.value.title)
+      }}
+    </a>
     <ng-container *ngIf="item.value | isObject">
-      <tree-node [node]="item.value" [tabulation]="((item.value | hasTheseProps:'title':'type') ? tabulationLenght : 0)"></tree-node>
+      <tree-node
+        [node]="item.value"
+        [tabulation]="((item.value | hasTheseProps:'title':'type') ? tabulationLenght : 0)"
+        [path]="pathToSend(item)"
+      ></tree-node>
     </ng-container>
   </div>
 </div>

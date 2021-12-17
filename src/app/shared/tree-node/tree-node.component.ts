@@ -7,18 +7,44 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 })
 export class TreeNodeComponent {
 
+  @ViewChild('treeRoot') treeRoot: ElementRef<HTMLDivElement>;
+
   @Input() node: any;
   @Input() tabulation: number;
+  @Input() path: string = '';
   public tabulationLenght: number = 20
+  public showRealValue = false;
+  public actualIndex: number
+  public isHovering: boolean = false;
 
   ngOnInit() {
-    if(this.tabulation == undefined) {
+    if (this.tabulation == undefined) {
       this.tabulation = 0;
     }
   }
 
-  public consoleLog(arg: any) {
-    console.log(arg);
+  public setHovering(isHovering: boolean) {
+    this.isHovering = isHovering;
+  }
+
+  public showPath(item: any): string {
+    return `{{${this.path + item.key}}}`;
+  }
+
+  public pathToSend(item: any): string {
+    if (item.key === 'items') return this.path + '0.'
+    if (item.key === 'properties') return this.path + ''
+    return this.path + item.key + '.';
+  }
+
+  public showRealPath(e: MouseEvent, index: number) {
+    this.showRealValue = true;
+    this.actualIndex = index;
+    const element = e.target as HTMLAnchorElement;
+    element.onmouseleave = () => {
+      this.showRealValue = false;
+      element.onmouseleave = null;
+    }
   }
 
 }

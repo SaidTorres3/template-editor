@@ -185,9 +185,12 @@ export class AppComponent {
 
   public onDrop(e: DragEvent) {
     // if has html content, prevent default
-    if (e.dataTransfer.getData("text/html")) { e.preventDefault() }
-    // get plain text
     const text = e.dataTransfer.getData("text/plain")
+    // if text not contain '{{' on the first position, prevent default
+    if (text.indexOf("ht") !== 0) {
+      e.preventDefault()
+      debugger;
+    }
     // if plain text contains like breaklines, prevent default
     if (text.includes("\n")) { e.preventDefault() }
   }
