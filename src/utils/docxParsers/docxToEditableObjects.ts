@@ -1,5 +1,5 @@
 import JSZip from 'jszip'
-import { parseString } from 'xml2js'
+import { parseString } from 'xml2js-preserve-spaces'
 import { InputFileFormat, Phrase } from './types';
 
 export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<Phrase[]> => {
@@ -22,27 +22,27 @@ export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<
           paragraphs.forEach((paragraph: { [x: string]: { [x: string]: any[]; }[]; }, paragraphIndex: number) => {
 
             const wRLabels = paragraph['w:r']
-            if (!wRLabels || !wRLabels.length) { 
+            if (!wRLabels || !wRLabels.length) {
               phrase = { value: enter, paragraphIndex, sentenseIndex: 0 }
               phrases.push(phrase)
-             } else {	
-            wRLabels.forEach((wRLabel: { [x: string]: any[]; }, wRLabelIndex) => {
-              let text: string = '';
-              const WTLabel = wRLabel['w:t']
-              // check if WTLabel is an object and has the "_" property
-              if (WTLabel && WTLabel.length && WTLabel[0]['_']) {
-                text = WTLabel[0]['_']
-              } else {
-                if (WTLabel && WTLabel.length && typeof WTLabel[0] === 'string') {
-                  text = WTLabel[0]
-                } else if (WTLabel && WTLabel.length && WTLabel[0]['$']) {
-                  text = " "
+            } else {
+              wRLabels.forEach((wRLabel: { [x: string]: any[]; }, wRLabelIndex) => {
+                let text: string = '';
+                const WTLabel = wRLabel['w:t']
+                // check if WTLabel is an object and has the "_" property
+                if (WTLabel && WTLabel.length && WTLabel[0]['_']) {
+                  text = WTLabel[0]['_']
+                } else {
+                  if (WTLabel && WTLabel.length && typeof WTLabel[0] === 'string') {
+                    text = WTLabel[0]
+                  } else if (WTLabel && WTLabel.length && WTLabel[0]['$']) {
+                    text = " "
+                  }
                 }
-              }
-              phrase = { value: text, paragraphIndex, sentenseIndex: wRLabelIndex }
-              phrases.push(phrase)
-            })
-          }
+                phrase = { value: text, paragraphIndex, sentenseIndex: wRLabelIndex }
+                phrases.push(phrase)
+              })
+            }
 
           })
 

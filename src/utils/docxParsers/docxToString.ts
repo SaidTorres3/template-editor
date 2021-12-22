@@ -1,6 +1,5 @@
-import fs from 'fs';
 import JSZip from 'jszip'
-import { parseString,  } from 'xml2js'
+import { parseString, } from 'xml2js-preserve-spaces'
 import { InputFileFormat } from './types';
 
 export const docxToString = async (docxFile: InputFileFormat): Promise<string> => {

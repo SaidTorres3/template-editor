@@ -1,6 +1,5 @@
-import fs from 'fs';
 import JSZip from 'jszip'
-import xml2js from 'xml2js'
+import xml2js from 'xml2js-preserve-spaces'
 import { EditableObjectToDocxOpts, Phrase, PhraseCoords } from './types';
 
 export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<Blob> => {
@@ -16,18 +15,17 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
           const paragraphs = result['w:document']['w:body'][0]['w:p']
           paragraphs.forEach((paragraph: { [x: string]: { [x: string]: any[]; }[]; }, paragraphIndex: number) => {
             const wRLabels = paragraph['w:r']
-            if (!wRLabels || !wRLabels.length) { return }
+            if (!wRLabels || !wRLabels.length) { return paragraph }
             wRLabels.forEach((wRLabel: { [x: string]: any[]; }, wRLabelIndex) => {
-              const modfiedPhrase = getModifiedPhare(opts.modifiedObjects, { paragraphIndex, sentenseIndex: wRLabelIndex })
-              if (!modfiedPhrase) { return }
+              const modfiedPhrase = getModifiedPhrase(opts.modifiedObjects, { paragraphIndex, sentenseIndex: wRLabelIndex })
+              if (!modfiedPhrase) { return paragraph }
               // check if WTLabel is an object and has the "_" property
               if (wRLabel['w:t'] && wRLabel['w:t'].length && wRLabel['w:t'][0]['_']) {
                 wRLabel['w:t'][0]['_'] = modfiedPhrase.value
               } else {
                 if (wRLabel['w:t'] && wRLabel['w:t'].length && typeof wRLabel['w:t'][0] === 'string') {
                   wRLabel['w:t'][0] = modfiedPhrase.value
-                } // else if (WTLabel && WTLabel.length && WTLabel[0]['$']) {
-                // }
+                }
               }
             })
           })
@@ -43,7 +41,7 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
   })
 }
 
-const getModifiedPhare = (phrases: Phrase[], phaseCoords: PhraseCoords): Phrase | undefined => {
+const getModifiedPhrase = (phrases: Phrase[], phaseCoords: PhraseCoords): Phrase | undefined => {
   const phrase = phrases.find((phrase: Phrase) => {
     if (phrase.paragraphIndex === phaseCoords.paragraphIndex && phrase.sentenseIndex === phaseCoords.sentenseIndex) {
       return phrase
