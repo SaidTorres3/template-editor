@@ -182,18 +182,6 @@ export class AppComponent {
     text = text.replace(/\n/g, " ")
     document.execCommand("insertText", false, text)
   }
-
-  public onDrop(e: DragEvent) {
-    // if has html content, prevent default
-    const text = e.dataTransfer.getData("text/plain")
-    // if text not contain '{{' on the first position, prevent default
-    if (text.indexOf("ht") !== 0) {
-      e.preventDefault()
-      debugger;
-    }
-    // if plain text contains like breaklines, prevent default
-    if (text.includes("\n")) { e.preventDefault() }
-  }
 }
 
 interface DocxFile {

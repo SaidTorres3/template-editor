@@ -47,4 +47,9 @@ export class TreeNodeComponent {
     }
   }
 
+  public replaceSelectionWithInnertext(e: MouseEvent){
+    const text = (e.target as HTMLDivElement).innerHTML
+    document.execCommand('insertText', true, text)
+  }
+
 }

@@ -5,19 +5,17 @@
     class="not-draggable"
     (mouseover)="showRealPath($event, i)"
     >
-    <a 
+    <div 
       *ngIf="item.value.title"
-      href={{item.value.title}}
-      (click)="$event.preventDefault()"
+      href="javascript:return false;"
+      (click)="replaceSelectionWithInnertext($event)"
       [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : undefined"
       [draggable]="item.value.type | doesStringRepresentPrimitive"
       contenteditable="false"
-      >
-      {{
+      >{{
         showRealValue && i==actualIndex && (item.value.type | doesStringRepresentPrimitive) && isHovering? 
           showPath(item) : (item.value.title)
-      }}
-    </a>
+      }}</div>
     <ng-container *ngIf="item.value | isObject">
       <tree-node
         [node]="item.value"
