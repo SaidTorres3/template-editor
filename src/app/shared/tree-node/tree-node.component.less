@@ -1,3 +1,12 @@
+.data-node {
+  display    : flex;
+  white-space: nowrap;
+}
+
+.data-node:hover {
+  overflow   : auto;
+}
+
 .primitive-value {
   color          : #0397e1;
   text-decoration: dotted;
@@ -8,7 +17,24 @@
   user-select: none;
 }
 
-a {
-  // quit the default blue underline
-  text-decoration: none;
+.not-primitive-value::before {
+  content: '⬪ ';
+  color  : #cf8787;
+}
+
+.primitive-value::before {
+  content: "- ";
+  color  : rgb(0, 60, 255);
+}
+
+// scroll bar width
+.data-node::-webkit-scrollbar {
+  height          : 5px;
+  background-color: #f0f0f0;
+}
+
+.data-node::-webkit-scrollbar-thumb {
+  // background-color
+  background-color: #888;
+  border-radius   : 5px;
 }

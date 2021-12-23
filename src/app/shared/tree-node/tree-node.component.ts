@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { DoesStringRepresentPrimitivePipe } from 'src/app/pipes/does-string-represent-primitive.pipe'
 
 @Component({
   selector: 'tree-node',
@@ -47,7 +48,10 @@ export class TreeNodeComponent {
     }
   }
 
-  public replaceSelectionWithInnertext(e: MouseEvent){
+  public replaceSelectionWithInnertext(e: MouseEvent, type: string) {
+    const primitivizerChecker = new DoesStringRepresentPrimitivePipe()
+    const isPrimitive = primitivizerChecker.transform(type)
+    if(!isPrimitive) return
     const text = (e.target as HTMLDivElement).innerHTML
     document.execCommand('insertText', true, text)
   }

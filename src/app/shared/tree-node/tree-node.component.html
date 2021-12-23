@@ -7,10 +7,9 @@
     >
     <div 
       *ngIf="item.value.title"
-      href="javascript:return false;"
-      (click)="replaceSelectionWithInnertext($event)"
-      [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : undefined"
-      [draggable]="item.value.type | doesStringRepresentPrimitive"
+      (click)="replaceSelectionWithInnertext($event, item.value.type)"
+      class="data-node"
+      [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : 'not-primitive-value'"
       contenteditable="false"
       >{{
         showRealValue && i==actualIndex && (item.value.type | doesStringRepresentPrimitive) && isHovering? 
