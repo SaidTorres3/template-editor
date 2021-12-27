@@ -21,6 +21,28 @@ body {
   display   : none;
 }
 
+.backdrop {
+  background-color: #0007;
+  position        : absolute;
+  top             : 0px;
+  width           : 100%;
+  height          : 100%;
+  z-index         : 11000;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+}
+
+.backdrop__drop-file-msg {
+  font-size   : 5vw;
+  color       : #fff;
+  font-weight : 300;
+  border-style: dashed;
+  border-color: #fff;
+  border-width: 1vw;
+  padding     : 1vw;
+}
+
 .header {
   position        : fixed;
   top             : 0px !important;
@@ -194,6 +216,22 @@ body {
   cursor          : pointer;
   // background-color darker than that #00a4f7, not #00a4f7
   background-color: #1196d8
+}
+
+.status-bar__mode-container {
+  display        : flex;
+  flex-direction : row;
+  justify-content: center;
+  align-items    : center;
+  padding        : 10px;
+}
+
+.status-bar__mode-container__item {
+  padding: 0px 6px;
+}
+
+.status-bar__mode-container__item--selected {
+  background-color: aqua;
 }
 
 /* width */

@@ -2,7 +2,7 @@ import JSZip from 'jszip'
 import xml2js from 'xml2js-preserve-spaces'
 import { EditableObjectToDocxOpts, Phrase, PhraseCoords } from './types';
 
-export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<Blob> => {
+export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<File> => {
   return new Promise((resolve, reject) => {
     // unzip the file
     const zipHandler = new JSZip();
@@ -33,7 +33,7 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
           // replace 'file' variable with modifiedXML
           zipContent.file('word/document.xml', modifiedXML)
           zipContent.generateAsync({ type: 'blob' }).then(function (outputFile) {
-            resolve(outputFile)
+            resolve(outputFile as File)
           })
         });
       })

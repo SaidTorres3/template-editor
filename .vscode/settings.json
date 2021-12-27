@@ -3,6 +3,10 @@
     "editor.selectionHighlightBackground": "#0000ff",
     "editor.selectionBackground": "#ff0000",
     "editor.lineHighlightBackground": "#1073cf2d",
-    "editor.lineHighlightBorder": "#9fced11f"
+    "editor.lineHighlightBorder": "#9fced11f",
+    "breadcrumb.background": "#000000",
+    "editor.background": "#000000",
+    "editorGutter.background": "#000000",
+    "tab.activeBackground": "#000000"
   }
 }

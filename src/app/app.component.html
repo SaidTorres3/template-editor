@@ -2,6 +2,13 @@
 <html lang="en" style="box-sizing: border-box;">
 
 <body>
+
+  <div *ngIf="workspace.dropingFile" class="backdrop" (wheel)="$event.preventDefault()">
+    <div class="backdrop__drop-file-msg">
+      Abrir template
+    </div>
+  </div>
+
   <div class="header">
     <input #uploadFileInput class="invisible" type="file" id="template" name="template" accept=".docx">
     <div *ngIf="workspace.fileDropDown" class="header__element__dropdown">
@@ -37,13 +44,10 @@
           <div *ngIf="phrases.length > 0">
             <ng-container *ngFor="let phrase of phrases; let index = index">
               <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-              <span
-                *ngIf="phrase.value !== '\r\n'"
-                class="workspace__template__paper-container__paper__phrase"
-                contentEditable="true" (input)="updateTextFromLabel($event, index)"
-                (paste)="onPaste($event)"
-                (dragover)="$event.preventDefault()"
-                >{{phrase.value}}</span>
+              <span *ngIf="phrase.value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
+                contentEditable="true" (input)="updateTextOfPhrase($event, index)"
+                (paste)="pasteContentWithoutStylesAndEnters($event)"
+                (dragover)="$event.preventDefault()">{{phrase.value}}</span>
             </ng-container>
           </div>
         </div>
@@ -60,6 +64,17 @@
       </div>
       <div class="status-bar__zoom-container__element" (click)="zoomIn(workspace.dataZoom)">
         +
+      </div>
+    </div>
+
+    <div class="status-bar__mode-container">
+      <div class="status-bar__mode-container__item">Modo: </div>
+      <div class="status-bar__mode-container__item"
+        [class]="workspace.mode==='edit' ? 'status-bar__mode-container__item--selected' : undefined">Edición</div>
+      <div class="status-bar__mode-container__item"
+        [class]="workspace.mode==='view' ? 'status-bar__mode-container__item--selected' : undefined">Vista</div>
+      <div class="status-bar__mode-container__item"
+        [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined">Simulación
       </div>
     </div>
 
