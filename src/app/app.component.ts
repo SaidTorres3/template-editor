@@ -208,38 +208,44 @@ export class AppComponent {
       count = initCount
       this.workspace.dropingFile = false
       if (e.dataTransfer.items[0].kind === "file" && e.dataTransfer.items[0].type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        console.log(e.dataTransfer.files)
         this.setTheDocument(e.dataTransfer.files[0])
       }
     }
   }
 
   public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
+    if(this.modifiedPhrasesHistory.length-1 > this.workspace.historyIndex) {
+      // keep the begining of the array to the history index
+      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex+1)
+    }
     const phraseElement = inputEvent.target as HTMLSpanElement;
-    const modifiedPhrases = this.phrases.map(a => ({ ...a }));
+    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length-1].map(a => ({ ...a }));
     modifiedPhrases[index].value = phraseElement.innerText
     console.log("update")
-    this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a })))
+    this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
   }
 
   public undo = () => {
-    if (this.modifiedPhrasesHistory.length > 1) {
-      this.modifiedPhrasesHistory.pop()
-      const lastPhrasesOfStack = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1]
-      // compare the last phrases of the stack with phrases and update the phrases if they are different
-      this.phrases.map((phrase, index) => {
-        if (phrase.value !== lastPhrasesOfStack[index].value) {
-          console.log('enter')
-          phrase.value = lastPhrasesOfStack[index].value
+    if (this.workspace.historyIndex > 0) {
+      const test = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+      this.workspace.historyIndex--
+      test.map((phrase, index) => {
+        if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
+          this.phrases[index] = {...this.modifiedPhrasesHistory[this.workspace.historyIndex][index]}
         }
       })
-      console.log(this.phrases)
     }
   }
-
+  
   public redo = () => {
-    if (this.modifiedPhrasesHistory.length > 0) {
-      this.phrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1]
+    if (this.workspace.historyIndex+1 <= this.modifiedPhrasesHistory.length-1) {
+      const test = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+      this.workspace.historyIndex++
+      test.map((phrase, index) => {
+        if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
+          this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
+        }
+      })
     }
   }
 
@@ -247,6 +253,7 @@ export class AppComponent {
     // add event listener to ctrl + z and ctrl + y
     document.addEventListener("keydown", (e) => {
       if (e.ctrlKey) {
+        console.log(this.modifiedPhrasesHistory)
         if (e.key === "z") {
           e.preventDefault()
           this.undo()
