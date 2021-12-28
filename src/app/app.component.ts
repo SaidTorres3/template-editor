@@ -19,12 +19,12 @@ export class AppComponent {
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
 
   public phrases: Phrase[] = [];
-  public modifiedPhrases: Phrase[] = [];
+  public modifiedPhrasesHistory: Phrase[][] = [];
   public objectData: any;
 
   public workspace: WorkSpace = {
     dropingFile: false,
-    
+
     fileDropDown: false,
     fileDropDownToggle: this.fileDropDownToggle,
 
@@ -32,6 +32,8 @@ export class AppComponent {
     dataZoom: { value: 1 },
 
     mode: ViewMode.edit,
+
+    historyIndex: 0
   }
 
   public docxFile: DocxFile = {
@@ -50,6 +52,7 @@ export class AppComponent {
     this.zoomInContainerListener(this.templateContainer, this.workspace.paperZoom)
     this.zoomInContainerListener(this.dataContainer, this.workspace.dataZoom)
     this.fileBackdropHandler()
+    this.historyHandler()
   }
 
   private clickOnGrabableBarDataListener() {
@@ -84,19 +87,15 @@ export class AppComponent {
     }
   }
 
-  public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
-    const phraseElement = inputEvent.target as HTMLSpanElement;
-    this.modifiedPhrases[index].value = phraseElement.innerText;
-  }
 
   public save() {
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length-1], fileIn: this.docxFile.content }).then((newDocx) => {
       this.setTheDocument(newDocx)
     })
   }
 
   public saveToComputer() {
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrases, fileIn: this.docxFile.content }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
       link.href = url
@@ -121,7 +120,7 @@ export class AppComponent {
       this.docxFile.content = data
       docxToEditableObjects(inputFile).then((editableObjects) => {
         this.phrases = editableObjects.map(a => ({ ...a }));
-        this.modifiedPhrases = editableObjects.map(a => ({ ...a }));
+        this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
       })
     }
     reader.readAsArrayBuffer(inputFile)
@@ -214,6 +213,51 @@ export class AppComponent {
       }
     }
   }
+
+  public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
+    const phraseElement = inputEvent.target as HTMLSpanElement;
+    const modifiedPhrases = this.phrases.map(a => ({ ...a }));
+    modifiedPhrases[index].value = phraseElement.innerText
+    console.log("update")
+    this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a })))
+  }
+
+  public undo = () => {
+    if (this.modifiedPhrasesHistory.length > 1) {
+      this.modifiedPhrasesHistory.pop()
+      const lastPhrasesOfStack = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1]
+      // compare the last phrases of the stack with phrases and update the phrases if they are different
+      this.phrases.map((phrase, index) => {
+        if (phrase.value !== lastPhrasesOfStack[index].value) {
+          console.log('enter')
+          phrase.value = lastPhrasesOfStack[index].value
+        }
+      })
+      console.log(this.phrases)
+    }
+  }
+
+  public redo = () => {
+    if (this.modifiedPhrasesHistory.length > 0) {
+      this.phrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1]
+    }
+  }
+
+  private historyHandler () {
+    // add event listener to ctrl + z and ctrl + y
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey) {
+        if (e.key === "z") {
+          e.preventDefault()
+          this.undo()
+          console.log('back')
+        } else if (e.key === "y") {
+          e.preventDefault()
+          this.redo()
+        }
+      }
+    })
+  }
 }
 interface DocxFile {
   name: string,
@@ -231,6 +275,7 @@ interface WorkSpace {
   dataZoom: { value: number },
 
   mode: ViewMode
+  historyIndex: number,
 }
 
 enum ViewMode {
