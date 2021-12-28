@@ -12,6 +12,7 @@ import exampleObject from './exampleObject.json';
 })
 
 export class AppComponent {
+
   title = 'template-editor';
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
@@ -39,7 +40,8 @@ export class AppComponent {
   public docxFile: DocxFile = {
     content: "",
     name: "",
-    lastModifiedDate: 0
+    lastModifiedDate: 0,
+    string: ""
   }
 
   ngOnInit() {
@@ -89,7 +91,7 @@ export class AppComponent {
 
 
   public save() {
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length-1], fileIn: this.docxFile.content }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
       this.setTheDocument(newDocx)
     })
   }
@@ -194,7 +196,7 @@ export class AppComponent {
         count++
       }
     }
-    
+
     window.ondragleave = (e) => {
       count--
       if (count < 0) {
@@ -213,13 +215,33 @@ export class AppComponent {
     }
   }
 
+  public setMode(mode: string) {
+    if (mode === "edit") {
+      this.workspace.mode = ViewMode.edit
+    } else if (mode === "view") {
+      this.workspace.mode = ViewMode.view
+      this.setViewMode()
+    } else if (mode === 'simulation') {
+      this.workspace.mode = ViewMode.simulation
+    }
+  }
+
+  private setViewMode() {
+    if (this.workspace.mode === ViewMode.view) {
+      docxToString(this.docxFile.content).then((string) => {
+        this.docxFile.string = string
+        console.log(string)
+      })
+    }
+  }
+
   public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
-    if(this.modifiedPhrasesHistory.length-1 > this.workspace.historyIndex) {
+    if (this.modifiedPhrasesHistory.length - 1 > this.workspace.historyIndex) {
       // keep the begining of the array to the history index
-      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex+1)
+      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex + 1)
     }
     const phraseElement = inputEvent.target as HTMLSpanElement;
-    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length-1].map(a => ({ ...a }));
+    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
     modifiedPhrases[index].value = phraseElement.innerText
     console.log("update")
     this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
@@ -231,14 +253,14 @@ export class AppComponent {
       this.workspace.historyIndex--
       test.map((phrase, index) => {
         if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
-          this.phrases[index] = {...this.modifiedPhrasesHistory[this.workspace.historyIndex][index]}
+          this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
         }
       })
     }
   }
-  
+
   public redo = () => {
-    if (this.workspace.historyIndex+1 <= this.modifiedPhrasesHistory.length-1) {
+    if (this.workspace.historyIndex + 1 <= this.modifiedPhrasesHistory.length - 1) {
       const test = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
       this.workspace.historyIndex++
       test.map((phrase, index) => {
@@ -249,7 +271,7 @@ export class AppComponent {
     }
   }
 
-  private historyHandler () {
+  private historyHandler() {
     // add event listener to ctrl + z and ctrl + y
     document.addEventListener("keydown", (e) => {
       if (e.ctrlKey) {
@@ -270,13 +292,14 @@ interface DocxFile {
   name: string,
   lastModifiedDate: number,
   content: InputFileFormat,
+  string: string
 }
 
 interface WorkSpace {
   dropingFile: boolean,
 
   fileDropDown: boolean,
-  fileDropDownToggle: ()=>void,
+  fileDropDownToggle: () => void,
 
   paperZoom: { value: number },
   dataZoom: { value: number },

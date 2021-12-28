@@ -41,7 +41,7 @@
     <div #templateContainer class="workspace__template">
       <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
         <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
-          <div *ngIf="phrases.length > 0">
+          <div *ngIf="phrases.length > 0 && workspace.mode === 'edit'">
             <ng-container *ngFor="let phrase of phrases; let index = index">
               <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
               <span *ngIf="phrase.value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
@@ -50,6 +50,11 @@
                 (dragover)="$event.preventDefault()">{{phrase.value}}</span>
             </ng-container>
           </div>
+
+          <div *ngIf="workspace.mode === 'view' && docxFile.string"
+          class="workspace__template__paper-container__paper__phrase"
+          [innerHTML]="docxFile.string|hTMLCaster"
+          ></div>
         </div>
       </div>
     </div>
@@ -68,13 +73,13 @@
     </div>
 
     <div class="status-bar__mode-container">
-      <div class="status-bar__mode-container__item">Modo: </div>
+      <div class="status-bar__mode-container__item" style="cursor: default;">Modo: </div>
       <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='edit' ? 'status-bar__mode-container__item--selected' : undefined">Edición</div>
+        [class]="workspace.mode==='edit' ? 'status-bar__mode-container__item--selected' : undefined" (click)="setMode('edit')">Edición</div>
       <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='view' ? 'status-bar__mode-container__item--selected' : undefined">Vista</div>
+        [class]="workspace.mode==='view' ? 'status-bar__mode-container__item--selected' : undefined" (click)="setMode('view')">Vista</div>
       <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined">Simulación
+        [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined" (click)="setMode('simulation')">Simulación
       </div>
     </div>
 
