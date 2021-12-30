@@ -1,6 +1,18 @@
 
 import JSZip from 'jszip'
 
+export interface ViewablePhrase {
+  type: ViewablePhraseType
+  value: string|ViewablePhrase[]
+}
+
+export enum ViewablePhraseType {
+  text = 'text',
+  handlebar = 'handlebar',
+  if = 'if',
+  forEach = 'forEach',
+}
+
 export interface Phrase {
   value: string,
   paragraphIndex: number,

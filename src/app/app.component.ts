@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { docxToEditableObjects } from 'src/utils/docxParsers/docxToEditableObjects';
 import { docxToString } from 'src/utils/docxParsers/docxToString';
-import { InputFileFormat, Phrase } from 'src/utils/docxParsers/types';
+import { InputFileFormat, Phrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
 import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDocx';
 import exampleObject from './exampleObject.json';
 
@@ -19,8 +19,6 @@ export class AppComponent {
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
 
-  public phrases: Phrase[] = [];
-  public modifiedPhrasesHistory: Phrase[][] = [];
   public objectData: any;
 
   public workspace: WorkSpace = {
@@ -37,11 +35,13 @@ export class AppComponent {
     historyIndex: 0
   }
 
+  public phrases: Phrase[] = [];
+  public viewablePhrases: ViewablePhrase[] = [];
+  public modifiedPhrasesHistory: Phrase[][] = [];
   public docxFile: DocxFile = {
     content: "",
     name: "",
     lastModifiedDate: 0,
-    string: ""
   }
 
   ngOnInit() {
@@ -218,21 +218,94 @@ export class AppComponent {
   public setMode(mode: string) {
     if (mode === "edit") {
       this.workspace.mode = ViewMode.edit
+      this.updatesViewValues()
     } else if (mode === "view") {
       this.workspace.mode = ViewMode.view
-      this.setViewMode()
+      this.updatesViewValues()
     } else if (mode === 'simulation') {
       this.workspace.mode = ViewMode.simulation
     }
   }
 
-  private setViewMode() {
-    if (this.workspace.mode === ViewMode.view) {
-      docxToString(this.docxFile.content).then((string) => {
-        this.docxFile.string = string
-        console.log(string)
-      })
+  private updatesViewValues() {
+    this.phrases = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+    this.updateViewablePhrasesValue()
+  }
+
+  private updateViewablePhrasesValue() {
+    this.viewablePhrases = this.transformPhrasesToViewablePhrases(this.modifiedPhrasesHistory[this.workspace.historyIndex])
+  }
+
+  private transformPhrasesToString = (phrases: Phrase[]): string => {
+    phrases = phrases.map(a => ({ ...a }));
+    let phrasesStringtified = ""
+    phrases.forEach(a => {
+      phrasesStringtified += a.value
+    })
+    return phrasesStringtified
+  }
+
+  private getTextAndTagsAsViewablePhrases = (opts: FindTagsOpts): ViewablePhrase[] => {
+    const startsAndEnds: FoundedTagsPosition[] = []
+    let amountOfEndingTagsNeededToClose = 0;
+    let begginingOfTagPosition = 0;
+    let endingOfTagPosition = -1;
+    for (let i = 0; i < opts.text.length; i++) {
+      const isStartingATag = opts.text.substring(i, i + opts.tag.beginTag.length) === opts.tag.beginTag
+      const isEndingAnTag = opts.text.substring(i, i + opts.tag.closeTag.length) === opts.tag.closeTag
+      if (isStartingATag) {
+        if (!amountOfEndingTagsNeededToClose) {
+          const isThereText = (i - endingOfTagPosition) > 0
+          isThereText ? startsAndEnds.push({ start: endingOfTagPosition, end: i, isTag: false }) : null
+        }
+        amountOfEndingTagsNeededToClose++;
+        !begginingOfTagPosition ? begginingOfTagPosition = i : null;
+      } else if (isEndingAnTag && amountOfEndingTagsNeededToClose) {
+        amountOfEndingTagsNeededToClose--;
+        if (!amountOfEndingTagsNeededToClose) {
+          endingOfTagPosition = i + opts.tag.closeTag.length;
+          startsAndEnds.push({ start: begginingOfTagPosition, end: endingOfTagPosition, isTag: true })
+          begginingOfTagPosition = 0;
+        };
+      }
     }
+    startsAndEnds.sort((a, b) => a.start - b.start)
+
+    let viewablePhrases: ViewablePhrase[] = []
+    startsAndEnds.forEach(a => {
+      viewablePhrases.push({
+        value: opts.text.substring(a.start, a.end),
+        type: a.isTag ? opts.tag.type : ViewablePhraseType.text
+      })
+    })
+
+    return viewablePhrases
+  }
+
+  private transformPhrasesToViewablePhrases(phrases: Phrase[]): ViewablePhrase[] {
+
+    const createViewablePhrases = (text: string, tagsToClasificate: BeginAndCloseTags[]): ViewablePhrase[] => {
+      let viewablePhrases: ViewablePhrase[] = []
+
+      tagsToClasificate.forEach(a => {
+        if (viewablePhrases.length) {
+          viewablePhrases.map(b => {
+            if (b.type === ViewablePhraseType.text) {
+              // TO DO
+            }
+          })
+        } else {
+          viewablePhrases.push(...this.getTextAndTagsAsViewablePhrases({ text, tag: a }))
+        }
+      })
+
+      return viewablePhrases
+    }
+
+    const phrasesStringtified = this.transformPhrasesToString(phrases)
+    const findIf: BeginAndCloseTags = { beginTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if }
+    const findHandlebars: BeginAndCloseTags = { beginTag: "{{", closeTag: "}}", type: ViewablePhraseType.handlebar }
+    return createViewablePhrases(phrasesStringtified, [findIf, findHandlebars])
   }
 
   public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
@@ -256,6 +329,7 @@ export class AppComponent {
           this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
         }
       })
+      this.updateViewablePhrasesValue()
     }
   }
 
@@ -268,6 +342,7 @@ export class AppComponent {
           this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
         }
       })
+      this.updateViewablePhrasesValue()
     }
   }
 
@@ -287,12 +362,12 @@ export class AppComponent {
       }
     })
   }
+
 }
 interface DocxFile {
   name: string,
   lastModifiedDate: number,
   content: InputFileFormat,
-  string: string
 }
 
 interface WorkSpace {
@@ -312,4 +387,21 @@ enum ViewMode {
   edit = "edit",
   view = "view",
   simulation = "simulation"
+}
+
+interface FindTagsOpts {
+  text: string,
+  tag: BeginAndCloseTags
+}
+
+interface BeginAndCloseTags {
+  beginTag: string,
+  closeTag: string,
+  type: ViewablePhraseType
+}
+
+interface FoundedTagsPosition {
+  start: number,
+  end: number,
+  isTag: boolean
 }
