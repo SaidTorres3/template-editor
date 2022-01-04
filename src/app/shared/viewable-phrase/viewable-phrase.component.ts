@@ -8,22 +8,14 @@ import { ViewablePhrase } from 'src/utils/docxParsers/types';
 })
 export class ViewablePhraseComponent implements OnInit {
 
-  @Input() phraseOrPhrases: ViewablePhrase|ViewablePhrase[];
-  public phrase?: ViewablePhrase;
+  @Input() phraseOrPhrases: ViewablePhrase | ViewablePhrase[];
 
   constructor() { }
 
-  public isASingleViewablePhrase(phrase: ViewablePhrase|ViewablePhrase[]): boolean {
-   return !Array.isArray(phrase)
+  consoleLog(arg: any) {
+    console.log(arg);
   }
 
-  ngOnInit(): void {
-    if (this.isASingleViewablePhrase(this.phraseOrPhrases)) {
-      this.phrase = this.phraseOrPhrases as ViewablePhrase;
-    }
-
-    console.log('d')
-    console.log(this.phrase)
-  }
+  ngOnInit(): void { }
 
 }

@@ -10,7 +10,7 @@ export enum ViewablePhraseType {
   text = 'text',
   handlebar = 'handlebar',
   if = 'if',
-  forEach = 'forEach',
+  each = 'each',
 }
 
 export interface Phrase {

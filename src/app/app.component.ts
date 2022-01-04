@@ -56,6 +56,7 @@ export class AppComponent {
     this.zoomInContainerListener(this.dataContainer, this.workspace.dataZoom)
     this.fileBackdropHandler()
     this.historyHandler()
+    this.shiftVListener()
   }
 
   private clickOnGrabableBarDataListener() {
@@ -237,6 +238,23 @@ export class AppComponent {
     this.viewablePhrases = this.transformPhrasesToViewablePhrases(this.modifiedPhrasesHistory[this.workspace.historyIndex])
   }
 
+  private shiftVListener() {
+    document.addEventListener('keypress', (e) => {
+      // detect when shift + v or shift + V and detect when stop pressing
+      if ((e.key === "z" || e.key === "Z") && e.shiftKey) {
+        e.preventDefault()
+        this.setMode('edit')
+      } else if ((e.key === "x" || e.key === "X") && e.shiftKey) {
+        e.preventDefault()
+        this.setMode('view')
+      } else if ((e.key === "c" || e.key === "C") && e.shiftKey) {
+        e.preventDefault()
+        this.setMode('simulation')
+        // if ctrl + shift
+      }
+    })
+  }
+
   private transformPhrasesToString = (phrases: Phrase[]): string => {
     phrases = phrases.map(a => ({ ...a }));
     let phrasesStringtified = ""
@@ -254,6 +272,10 @@ export class AppComponent {
     for (let i = 0; i < opts.text.length; i++) {
       const isStartingATag = opts.text.substring(i, i + opts.tag.beginTag.length) === opts.tag.beginTag
       const isEndingAnTag = opts.text.substring(i, i + opts.tag.closeTag.length) === opts.tag.closeTag
+      const isTheLastCharacter = i === opts.text.length - 1
+      if (isTheLastCharacter && i != endingOfTagPosition) {
+        startsAndEnds.push({ start: endingOfTagPosition, end: i + 1, isTag: false })
+      }
       if (isStartingATag) {
         if (!amountOfEndingTagsNeededToClose) {
           const isThereText = (i - endingOfTagPosition) > 0
@@ -288,12 +310,12 @@ export class AppComponent {
       let initialText: ViewablePhrase = { type: ViewablePhraseType.text, value: text }
       let maxTimesOfRecursion = tagsToClasificate.length;
 
-      const getResult = (viewablePhrase: ViewablePhrase, numberOfRecursion?: number): ViewablePhrase[]|string => {
+      const getResult = (viewablePhrase: ViewablePhrase, numberOfRecursion?: number): ViewablePhrase[] | string => {
         numberOfRecursion ? null : numberOfRecursion = 0;
         if (numberOfRecursion >= maxTimesOfRecursion) {
           return viewablePhrase.value
         } else {
-          if(typeof viewablePhrase.value === 'object' && viewablePhrase.value instanceof Array ) {
+          if (typeof viewablePhrase.value === 'object' && viewablePhrase.value instanceof Array) {
             viewablePhrase.value.forEach(a => {
               (a.type === ViewablePhraseType.text) ? a.value = getResult(a, numberOfRecursion + 1) : a
             })
@@ -308,10 +330,9 @@ export class AppComponent {
           }
         }
       }
-      
+
       const result = getResult(initialText)
-      console.log(result)
-      if(result instanceof Array) {
+      if (result instanceof Array) {
         return result
       } else {
         return []
@@ -319,9 +340,10 @@ export class AppComponent {
     }
 
     const phrasesStringtified = this.transformPhrasesToString(phrases)
+    const findEach: BeginAndCloseTags = { beginTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each}
     const findIf: BeginAndCloseTags = { beginTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if }
     const findHandlebars: BeginAndCloseTags = { beginTag: "{{", closeTag: "}}", type: ViewablePhraseType.handlebar }
-    return createViewablePhrases(phrasesStringtified, [findIf, findHandlebars])
+    return createViewablePhrases(phrasesStringtified, [findIf, findEach, findHandlebars])
   }
 
   public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
@@ -366,11 +388,9 @@ export class AppComponent {
     // add event listener to ctrl + z and ctrl + y
     document.addEventListener("keydown", (e) => {
       if (e.ctrlKey) {
-        console.log(this.modifiedPhrasesHistory)
         if (e.key === "z") {
           e.preventDefault()
           this.undo()
-          console.log('back')
         } else if (e.key === "y") {
           e.preventDefault()
           this.redo()

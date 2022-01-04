@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IsArrayPipe implements PipeTransform {
 
-  transform(value: any): boolean {
+  transform<T>(value: T | T[]): value is T[] {
     return Array.isArray(value);
   }
 
