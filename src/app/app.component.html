@@ -53,10 +53,7 @@
 
           <div *ngIf="workspace.mode === 'view' && viewablePhrases">
             <ng-container *ngFor="let viewablePhrase of viewablePhrases; let index = index">
-              <span
-                class="workspace__template__paper-container__paper__phrase"
-                [class]="viewablePhrase.type === 'if' ? 'workspace__template__paper-container__paper__phrase--viewable--if' : undefined"  
-              >{{viewablePhrase.value}}</span>
+              <viewable-phrase [phraseOrPhrases]="viewablePhrase"></viewable-phrase>
             </ng-container>
           </div>
         </div>

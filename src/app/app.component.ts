@@ -4,6 +4,7 @@ import { docxToString } from 'src/utils/docxParsers/docxToString';
 import { InputFileFormat, Phrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
 import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDocx';
 import exampleObject from './exampleObject.json';
+import { forEach } from 'jszip';
 
 @Component({
   selector: 'app-root',
@@ -283,23 +284,38 @@ export class AppComponent {
   }
 
   private transformPhrasesToViewablePhrases(phrases: Phrase[]): ViewablePhrase[] {
-
     const createViewablePhrases = (text: string, tagsToClasificate: BeginAndCloseTags[]): ViewablePhrase[] => {
-      let viewablePhrases: ViewablePhrase[] = []
+      let initialText: ViewablePhrase = { type: ViewablePhraseType.text, value: text }
+      let maxTimesOfRecursion = tagsToClasificate.length;
 
-      tagsToClasificate.forEach(a => {
-        if (viewablePhrases.length) {
-          viewablePhrases.map(b => {
-            if (b.type === ViewablePhraseType.text) {
-              // TO DO
-            }
-          })
+      const getResult = (viewablePhrase: ViewablePhrase, numberOfRecursion?: number): ViewablePhrase[]|string => {
+        numberOfRecursion ? null : numberOfRecursion = 0;
+        if (numberOfRecursion >= maxTimesOfRecursion) {
+          return viewablePhrase.value
         } else {
-          viewablePhrases.push(...this.getTextAndTagsAsViewablePhrases({ text, tag: a }))
+          if(typeof viewablePhrase.value === 'object' && viewablePhrase.value instanceof Array ) {
+            viewablePhrase.value.forEach(a => {
+              (a.type === ViewablePhraseType.text) ? a.value = getResult(a, numberOfRecursion + 1) : a
+            })
+            return viewablePhrase.value
+          } else {
+            const theString = viewablePhrase.value.toString()
+            const temporalResult = this.getTextAndTagsAsViewablePhrases({ text: theString, tag: tagsToClasificate[numberOfRecursion] })
+            temporalResult.forEach(a => {
+              return (a.type === ViewablePhraseType.text) ? a.value = getResult(a, numberOfRecursion + 1) : a
+            })
+            return temporalResult
+          }
         }
-      })
-
-      return viewablePhrases
+      }
+      
+      const result = getResult(initialText)
+      console.log(result)
+      if(result instanceof Array) {
+        return result
+      } else {
+        return []
+      }
     }
 
     const phrasesStringtified = this.transformPhrasesToString(phrases)

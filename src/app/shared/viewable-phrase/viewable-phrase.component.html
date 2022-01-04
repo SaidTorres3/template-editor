@@ -1,0 +1,16 @@
+omega
+<ng-container *ngIf="phraseOrPhrases|isArray">
+  <ng-container *ngFor="let phrase of phraseOrPhrases">
+    beta
+    <viewable-phrase [phraseOrPhrases]="phrase.value"></viewable-phrase>
+  </ng-container>
+</ng-container>
+
+<ng-container *ngIf="phrase">
+  axioma
+  <p *ngIf="!(phrase.value|isObject)">{{phrase.value}}ñ</p>
+  <ng-container *ngIf="(phrase.value|isObject)">
+    alfa
+    <viewable-phrase [phraseOrPhrases]="phrase.value"></viewable-phrase>
+  </ng-container>
+</ng-container>
