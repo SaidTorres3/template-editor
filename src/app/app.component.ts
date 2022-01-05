@@ -19,31 +19,27 @@ export class AppComponent {
   @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
-
-  public objectData: any;
-
+  
   public workspace: WorkSpace = {
     dropingFile: false,
-
     fileDropDown: false,
     fileDropDownToggle: this.fileDropDownToggle,
-
     paperZoom: { value: 1 },
     dataZoom: { value: 1 },
-
     mode: ViewMode.edit,
-
     historyIndex: 0
   }
-
-  public phrases: Phrase[] = [];
-  public viewablePhrases: ViewablePhrase[] = [];
-  public modifiedPhrasesHistory: Phrase[][] = [];
+  
   public docxFile: DocxFile = {
     content: "",
     name: "",
     lastModifiedDate: 0,
   }
+
+  public objectData: any;
+  public phrases: Phrase[] = [];
+  public viewablePhrases: ViewablePhrase[] = [];
+  public modifiedPhrasesHistory: Phrase[][] = [];
 
   ngOnInit() {
     this.objectData = exampleObject;
@@ -61,7 +57,6 @@ export class AppComponent {
 
   private clickOnGrabableBarDataListener() {
     const grabableBarData = this.grabableBarData.nativeElement
-
     grabableBarData.onmousedown = (e) => {
       const startX = e.clientX
       const startWidth = this.dataContainer.nativeElement.clientWidth
@@ -75,7 +70,6 @@ export class AppComponent {
         }
         window.onmouseup = onMouseUp
       }
-
       window.onmouseup = (e) => {
         window.onmousemove = null
         window.onmouseup = null
@@ -90,7 +84,6 @@ export class AppComponent {
       this.setTheDocument(input.files[0])
     }
   }
-
 
   public save() {
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
@@ -107,7 +100,6 @@ export class AppComponent {
       link.click()
       link.remove()
       URL.revokeObjectURL(url)
-
       docxToString(newDocx).then((string) => {
         console.log(string);
       });
@@ -125,6 +117,7 @@ export class AppComponent {
       docxToEditableObjects(inputFile).then((editableObjects) => {
         this.phrases = editableObjects.map(a => ({ ...a }));
         this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
+        this.updatesViewValues()
       })
     }
     reader.readAsArrayBuffer(inputFile)
@@ -188,9 +181,7 @@ export class AppComponent {
   public fileBackdropHandler = () => {
     const initCount = -1
     let count = initCount
-
     window.ondragover = (e) => { e.preventDefault(); }
-
     window.ondragenter = (e) => {
       // if event contains a file with .docx extension
       if (e.dataTransfer.items[0].kind === "file" && e.dataTransfer.items[0].type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
@@ -198,7 +189,6 @@ export class AppComponent {
         count++
       }
     }
-
     window.ondragleave = (e) => {
       count--
       if (count < 0) {
@@ -206,7 +196,6 @@ export class AppComponent {
         count = initCount
       }
     }
-
     window.ondrop = (e: DragEvent) => {
       e.preventDefault()
       count = initCount
