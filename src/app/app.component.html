@@ -43,7 +43,7 @@
         <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
           <div *ngIf="phrases.length > 0 && workspace.mode === 'edit'">
             <ng-container *ngFor="let phrase of phrases; let index = index">
-              <!-- <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" /> -->
+              <br *ngIf="phrases[index-1] && phrases[index-1].paragraphIndex < phrase.paragraphIndex" />
               <span *ngIf="phrase.value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
                 contentEditable="true" (input)="updateTextOfPhrase($event, index)"
                 (paste)="pasteContentWithoutStylesAndEnters($event)"

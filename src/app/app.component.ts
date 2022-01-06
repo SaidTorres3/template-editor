@@ -247,8 +247,12 @@ export class AppComponent {
   private transformPhrasesToString = (phrases: Phrase[]): string => {
     phrases = phrases.map(a => ({ ...a }));
     let phrasesStringtified = ""
-    phrases.forEach(a => {
-      phrasesStringtified += a.value
+    phrases.forEach((phrase, index) => {
+      const phraseWihoutEnter = phrase.value.concat().replace('\n', '')
+      if (phrases[index - 1] && phrases[index - 1].paragraphIndex < phrase.paragraphIndex) {
+        phrasesStringtified += '\r\n'
+      }
+      phrasesStringtified += phraseWihoutEnter
     })
     return phrasesStringtified
   }
@@ -301,12 +305,11 @@ export class AppComponent {
       })
     })
 
-    console.log(viewablePhrases)
     return viewablePhrases
   }
 
   private transformPhrasesToViewablePhrases(phrases: Phrase[]): ViewablePhrase[] {
-    let priority = -1
+    let priority = 0
     const phrasesStringtified = this.transformPhrasesToString(phrases)
     const findEach: Tag = { startTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each, priority: priority++ }
     const findIf: Tag = { startTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if, priority: priority++ }
