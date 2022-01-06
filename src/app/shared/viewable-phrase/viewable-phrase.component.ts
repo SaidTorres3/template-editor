@@ -8,7 +8,7 @@ import { ViewablePhrase } from 'src/utils/docxParsers/types';
 })
 export class ViewablePhraseComponent implements OnInit {
 
-  @Input() phraseOrPhrases: ViewablePhrase | ViewablePhrase[];
+  @Input() viewablePhrases: ViewablePhrase[];
 
   constructor() { }
 

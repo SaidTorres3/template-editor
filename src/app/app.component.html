@@ -52,9 +52,7 @@
           </div>
 
           <div *ngIf="workspace.mode === 'view' && viewablePhrases">
-            <ng-container *ngFor="let viewablePhrase of viewablePhrases; let index = index">
-              <viewable-phrase [phraseOrPhrases]="viewablePhrase"></viewable-phrase>
-            </ng-container>
+            <viewable-phrase [viewablePhrases]="viewablePhrases"></viewable-phrase>
           </div>
         </div>
       </div>

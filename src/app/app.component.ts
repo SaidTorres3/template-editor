@@ -19,7 +19,7 @@ export class AppComponent {
   @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
-  
+
   public workspace: WorkSpace = {
     dropingFile: false,
     fileDropDown: false,
@@ -29,7 +29,7 @@ export class AppComponent {
     mode: ViewMode.edit,
     historyIndex: 0
   }
-  
+
   public docxFile: DocxFile = {
     content: "",
     name: "",
@@ -255,30 +255,40 @@ export class AppComponent {
 
   private getTextAndTagsAsViewablePhrases = (opts: FindTagsOpts): ViewablePhrase[] => {
     const startsAndEnds: FoundedTagsPosition[] = []
-    let amountOfEndingTagsNeededToClose = 0;
-    let begginingOfTagPosition = 0;
-    let endingOfTagPosition = -1;
+    let requirementsToCloseTag: { amountOfClosingTags: number, type: ViewablePhraseType | undefined } = { amountOfClosingTags: 0, type: undefined };
+    let startingTagPosition = 0;
+    let closingTagPosition = -1;
+    // sort tags by priority, lower priority first
+    opts.tags.sort((a, b) => { return a.priority - b.priority })
     for (let i = 0; i < opts.text.length; i++) {
-      const isStartingATag = opts.text.substring(i, i + opts.tag.beginTag.length) === opts.tag.beginTag
-      const isEndingAnTag = opts.text.substring(i, i + opts.tag.closeTag.length) === opts.tag.closeTag
-      const isTheLastCharacter = i === opts.text.length - 1
-      if (isTheLastCharacter && i != endingOfTagPosition) {
-        startsAndEnds.push({ start: endingOfTagPosition, end: i + 1, isTag: false })
-      }
-      if (isStartingATag) {
-        if (!amountOfEndingTagsNeededToClose) {
-          const isThereText = (i - endingOfTagPosition) > 0
-          isThereText ? startsAndEnds.push({ start: endingOfTagPosition, end: i, isTag: false }) : null
+      for (let j = 0; j < opts.tags.length; j++) {
+        const { startTag, closeTag, type: tagType } = opts.tags[j]
+        const isStartingATag = opts.text.substring(i, i + startTag.length) === startTag
+        const isEndingAnTag = opts.text.substring(i, i + closeTag.length) === closeTag
+        const isTheLastCharacter = i === opts.text.length - 1
+
+        if ((isTheLastCharacter) && (i != closingTagPosition)) {
+          const isThereText = (i - closingTagPosition) > 0
+          isThereText ? startsAndEnds.push({ start: closingTagPosition, end: i, type: ViewablePhraseType.text }) : null
+          break;
         }
-        amountOfEndingTagsNeededToClose++;
-        !begginingOfTagPosition ? begginingOfTagPosition = i : null;
-      } else if (isEndingAnTag && amountOfEndingTagsNeededToClose) {
-        amountOfEndingTagsNeededToClose--;
-        if (!amountOfEndingTagsNeededToClose) {
-          endingOfTagPosition = i + opts.tag.closeTag.length;
-          startsAndEnds.push({ start: begginingOfTagPosition, end: endingOfTagPosition, isTag: true })
-          begginingOfTagPosition = 0;
-        };
+
+        if (isStartingATag && ((!requirementsToCloseTag.amountOfClosingTags) || (requirementsToCloseTag.type === tagType))) {
+          if (!requirementsToCloseTag.amountOfClosingTags) {
+            const isThereText = (i - closingTagPosition) > 0
+            isThereText ? startsAndEnds.push({ start: closingTagPosition, end: i, type: ViewablePhraseType.text }) : null
+            startingTagPosition = i
+          }
+          requirementsToCloseTag = { amountOfClosingTags: requirementsToCloseTag.amountOfClosingTags + 1, type: opts.tags[j].type }
+          break;
+        } else if ((isEndingAnTag) && (tagType == requirementsToCloseTag.type)) {
+          requirementsToCloseTag.amountOfClosingTags--
+          if (requirementsToCloseTag.amountOfClosingTags == 0) {
+            closingTagPosition = i + closeTag.length
+            startsAndEnds.push({ start: startingTagPosition, end: closingTagPosition, type: opts.tags[j].type })
+          }
+          break;
+        }
       }
     }
     startsAndEnds.sort((a, b) => a.start - b.start)
@@ -287,52 +297,21 @@ export class AppComponent {
     startsAndEnds.forEach(a => {
       viewablePhrases.push({
         value: opts.text.substring(a.start, a.end),
-        type: a.isTag ? opts.tag.type : ViewablePhraseType.text
+        type: a.type
       })
     })
 
+    console.log(viewablePhrases)
     return viewablePhrases
   }
 
   private transformPhrasesToViewablePhrases(phrases: Phrase[]): ViewablePhrase[] {
-    const createViewablePhrases = (text: string, tagsToClasificate: BeginAndCloseTags[]): ViewablePhrase[] => {
-      let initialText: ViewablePhrase = { type: ViewablePhraseType.text, value: text }
-      let maxTimesOfRecursion = tagsToClasificate.length;
-
-      const getResult = (viewablePhrase: ViewablePhrase, numberOfRecursion?: number): ViewablePhrase[] | string => {
-        numberOfRecursion ? null : numberOfRecursion = 0;
-        if (numberOfRecursion >= maxTimesOfRecursion) {
-          return viewablePhrase.value
-        } else {
-          if (typeof viewablePhrase.value === 'object' && viewablePhrase.value instanceof Array) {
-            viewablePhrase.value.forEach(a => {
-              (a.type === ViewablePhraseType.text) ? a.value = getResult(a, numberOfRecursion + 1) : a
-            })
-            return viewablePhrase.value
-          } else {
-            const theString = viewablePhrase.value.toString()
-            const temporalResult = this.getTextAndTagsAsViewablePhrases({ text: theString, tag: tagsToClasificate[numberOfRecursion] })
-            temporalResult.forEach(a => {
-              return (a.type === ViewablePhraseType.text) ? a.value = getResult(a, numberOfRecursion + 1) : a
-            })
-            return temporalResult
-          }
-        }
-      }
-
-      const result = getResult(initialText)
-      if (result instanceof Array) {
-        return result
-      } else {
-        return []
-      }
-    }
-
+    let priority = -1
     const phrasesStringtified = this.transformPhrasesToString(phrases)
-    const findEach: BeginAndCloseTags = { beginTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each}
-    const findIf: BeginAndCloseTags = { beginTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if }
-    const findHandlebars: BeginAndCloseTags = { beginTag: "{{", closeTag: "}}", type: ViewablePhraseType.handlebar }
-    return createViewablePhrases(phrasesStringtified, [findIf, findEach, findHandlebars])
+    const findEach: Tag = { startTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each, priority: priority++ }
+    const findIf: Tag = { startTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if, priority: priority++ }
+    const findHandlebars: Tag = { startTag: "{{", closeTag: "}}", type: ViewablePhraseType.handlebar, priority: priority++ }
+    return this.getTextAndTagsAsViewablePhrases({ text: phrasesStringtified, tags: [findIf, findEach, findHandlebars] })
   }
 
   public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
@@ -343,7 +322,6 @@ export class AppComponent {
     const phraseElement = inputEvent.target as HTMLSpanElement;
     const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
     modifiedPhrases[index].value = phraseElement.innerText
-    console.log("update")
     this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
   }
 
@@ -397,13 +375,10 @@ interface DocxFile {
 
 interface WorkSpace {
   dropingFile: boolean,
-
   fileDropDown: boolean,
   fileDropDownToggle: () => void,
-
   paperZoom: { value: number },
   dataZoom: { value: number },
-
   mode: ViewMode
   historyIndex: number,
 }
@@ -416,17 +391,18 @@ enum ViewMode {
 
 interface FindTagsOpts {
   text: string,
-  tag: BeginAndCloseTags
+  tags: Tag[]
 }
 
-interface BeginAndCloseTags {
-  beginTag: string,
+interface Tag {
+  startTag: string,
   closeTag: string,
-  type: ViewablePhraseType
+  type: ViewablePhraseType,
+  priority: number
 }
 
 interface FoundedTagsPosition {
   start: number,
   end: number,
-  isTag: boolean
+  type: ViewablePhraseType
 }

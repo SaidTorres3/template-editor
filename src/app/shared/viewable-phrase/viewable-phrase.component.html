@@ -1,31 +1,12 @@
-<ng-container *ngIf="phraseOrPhrases|isArray">
-  <ng-container *ngFor="let phrase of phraseOrPhrases">
-    <ng-container *ngIf="!(phrase|isArray)">
+<ng-container *ngIf="viewablePhrases">
+  <ng-container *ngFor="let viewablePhrase of viewablePhrases">
       <p
-        *ngIf="!(phrase && phrase.value|isObject)"
-        [class.viewable-phrase--typed]="phrase.type !== 'text'"
-        [class.viewable-phrase--if]="phrase.type === 'if'"
-        [class.viewable-phrase--handlebar]="phrase.type === 'handlebar'"
-        [class.viewable-phrase--each]="phrase.type === 'each'"
+        *ngIf="!(viewablePhrase && viewablePhrase.value|isObject)"
+        [class.viewable-phrase--typed]="viewablePhrase.type !== 'text'"
+        [class.viewable-phrase--if]="viewablePhrase.type === 'if'"
+        [class.viewable-phrase--handlebar]="viewablePhrase.type === 'handlebar'"
+        [class.viewable-phrase--each]="viewablePhrase.type === 'each'"
         class="viewable-phrase"
-      >{{phrase.value}}</p>
-      <ng-container *ngIf="(phrase.value|isObject)">
-        <viewable-phrase [phraseOrPhrases]="phrase.value"></viewable-phrase>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-</ng-container>
-
-<ng-container *ngIf="!(phraseOrPhrases|isArray)">
-  <p
-    *ngIf="!(phraseOrPhrases.value|isObject)"
-    [class.viewable-phrase--typed]="phraseOrPhrases.type !== 'text'"
-    [class.viewable-phrase--if]="phraseOrPhrases.type === 'if'"
-    [class.viewable-phrase--handlebar]="phraseOrPhrases.type === 'handlebar'"
-    [class.viewable-phrase--each]="phraseOrPhrases.type === 'each'"
-    class="viewable-phrase"
-  >{{phraseOrPhrases.value}}</p>
-  <ng-container *ngIf="(phraseOrPhrases.value|isObject)">
-    <viewable-phrase [phraseOrPhrases]="phraseOrPhrases.value"></viewable-phrase>
+      >{{viewablePhrase.value}}</p>
   </ng-container>
 </ng-container>
