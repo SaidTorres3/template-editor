@@ -1,6 +1,6 @@
 import JSZip from 'jszip'
 import xml2js from 'xml2js-preserve-spaces'
-import { EditableObjectToDocxOpts, Phrase, PhraseCoords } from './types';
+import { EditableObjectToDocxOpts, EditablePhrase, PhraseCoords } from './types';
 
 export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<File> => {
   return new Promise((resolve, reject) => {
@@ -41,8 +41,8 @@ export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Prom
   })
 }
 
-const getModifiedPhrase = (phrases: Phrase[], phaseCoords: PhraseCoords): Phrase | undefined => {
-  const phrase = phrases.find((phrase: Phrase) => {
+const getModifiedPhrase = (phrases: EditablePhrase[], phaseCoords: PhraseCoords): EditablePhrase | undefined => {
+  const phrase = phrases.find((phrase: EditablePhrase) => {
     if (phrase.paragraphIndex === phaseCoords.paragraphIndex && phrase.sentenseIndex === phaseCoords.sentenseIndex) {
       return phrase
     }

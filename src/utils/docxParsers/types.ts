@@ -13,14 +13,14 @@ export enum ViewablePhraseType {
   each = 'each',
 }
 
-export interface Phrase {
+export interface EditablePhrase {
   value: string,
   paragraphIndex: number,
   sentenseIndex: number
 }
 
 export interface EditableObjectToDocxOpts {
-  modifiedObjects: Phrase[]
+  modifiedObjects: EditablePhrase[]
   fileIn: InputFileFormat,
 }
 

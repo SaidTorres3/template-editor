@@ -1,8 +1,8 @@
 import JSZip from 'jszip'
 import { parseString } from 'xml2js-preserve-spaces'
-import { InputFileFormat, Phrase } from './types';
+import { InputFileFormat, EditablePhrase } from './types';
 
-export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<Phrase[]> => {
+export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<EditablePhrase[]> => {
   return new Promise((resolve, reject) => {
     // unzip the file
     const zip = new JSZip();
@@ -13,11 +13,11 @@ export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<
       const file = wordFolder.file("document.xml")
       if (!file) { reject(`An error ocurred attempting to enter to the load the file 'document.xml' in folder 'word' of the docx file.`); return }
       file.async('string').then(function (XMLContent) {
-        const phrases: Phrase[] = []
+        const phrases: EditablePhrase[] = []
         parseString(XMLContent, function (err, result) {
           const paragraphs = result['w:document']['w:body'][0]['w:p']
           const enter = '\r\n'
-          let phrase: Phrase
+          let phrase: EditablePhrase
 
           paragraphs.forEach((paragraph: { [x: string]: { [x: string]: any[]; }[]; }, paragraphIndex: number) => {
 

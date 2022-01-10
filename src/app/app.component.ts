@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { docxToEditableObjects } from 'src/utils/docxParsers/docxToEditableObjects';
 import { docxToString } from 'src/utils/docxParsers/docxToString';
-import { InputFileFormat, Phrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
+import { InputFileFormat, EditablePhrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
 import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDocx';
 import exampleObject from './exampleObject.json';
 import { forEach } from 'jszip';
@@ -37,9 +37,9 @@ export class AppComponent {
   }
 
   public objectData: any;
-  public phrases: Phrase[] = [];
+  public editablePhrases: EditablePhrase[] = [];
   public viewablePhrases: ViewablePhrase[] = [];
-  public modifiedPhrasesHistory: Phrase[][] = [];
+  public modifiedPhrasesHistory: EditablePhrase[][] = [];
 
   ngOnInit() {
     this.objectData = exampleObject;
@@ -115,7 +115,7 @@ export class AppComponent {
       this.docxFile.lastModifiedDate = inputFile.lastModified
       this.docxFile.content = data
       docxToEditableObjects(inputFile).then((editableObjects) => {
-        this.phrases = editableObjects.map(a => ({ ...a }));
+        this.editablePhrases = editableObjects.map(a => ({ ...a }));
         this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
         this.updatesViewValues()
       })
@@ -219,7 +219,7 @@ export class AppComponent {
   }
 
   private updatesViewValues() {
-    this.phrases = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+    this.editablePhrases = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
     this.updateViewablePhrasesValue()
   }
 
@@ -244,7 +244,7 @@ export class AppComponent {
     })
   }
 
-  private transformPhrasesToString = (phrases: Phrase[]): string => {
+  private transformPhrasesToString = (phrases: EditablePhrase[]): string => {
     phrases = phrases.map(a => ({ ...a }));
     let phrasesStringtified = ""
     phrases.forEach((phrase, index) => {
@@ -308,7 +308,7 @@ export class AppComponent {
     return viewablePhrases
   }
 
-  private transformPhrasesToViewablePhrases(phrases: Phrase[]): ViewablePhrase[] {
+  private transformPhrasesToViewablePhrases(phrases: EditablePhrase[]): ViewablePhrase[] {
     let priority = 0
     const phrasesStringtified = this.transformPhrasesToString(phrases)
     const findEach: Tag = { startTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each, priority: priority++ }
@@ -334,7 +334,7 @@ export class AppComponent {
       this.workspace.historyIndex--
       test.map((phrase, index) => {
         if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
-          this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
+          this.editablePhrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
         }
       })
       this.updateViewablePhrasesValue()
@@ -347,7 +347,7 @@ export class AppComponent {
       this.workspace.historyIndex++
       test.map((phrase, index) => {
         if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
-          this.phrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
+          this.editablePhrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
         }
       })
       this.updateViewablePhrasesValue()
