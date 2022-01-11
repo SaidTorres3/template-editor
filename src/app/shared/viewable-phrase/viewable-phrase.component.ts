@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ViewablePhrase } from 'src/utils/docxParsers/types';
+import { handlebarToInstruction } from 'src/utils/handlebarTranslators/handlebarToReadableInstruction';
+import { ReadableInstruction } from 'src/utils/handlebarTranslators/types';
 
 @Component({
   selector: 'viewable-phrase',
@@ -11,7 +13,8 @@ export class ViewablePhraseComponent implements OnInit {
   public showModal: ShowModal = {
     phraseIndex: 0,
     showModal: false,
-    modalPostion: { x: 0, y: 0 }
+    modalPostion: { x: 0, y: 0 },
+    data: undefined
   };
 
   constructor() { }
@@ -23,13 +26,14 @@ export class ViewablePhraseComponent implements OnInit {
     this.showModal.showModal = !this.showModal.showModal;
     this.showModal.modalPostion.x = e.clientX;
     this.showModal.modalPostion.y = e.clientY;
+    this.translateHandlebarToInstructions(phraseIndex)
   }
 
-  public clasificateStringBeetweenTextAndHandlebars(text: string): ClafisifiedTextOrHandlebar[] {
-    let result: ClafisifiedTextOrHandlebar[] = [];
+  public clasificateStringBeetweenTextAndHandlebars(text: string): ReadableInstruction[] {
+    let result: ReadableInstruction[] = [];
     const startHandlebar = '{{';
     const endHandlebar = '}}';
-    const marginAmount = 10;
+    const marginAmount = 30;
     let margin = 0;
     let stringStorage = ''
     for (let i = 0; i < text.length; i++) {
@@ -61,31 +65,32 @@ export class ViewablePhraseComponent implements OnInit {
         stringStorage += text[i]
       }
     }
-    console.log(result)
     return result
   }
 
-  public handlebarsToReadableIntructions(clasifiedText: ClafisifiedTextOrHandlebar[]): ClafisifiedTextOrHandlebar[] {
-    let result: ClafisifiedTextOrHandlebar[] = []
+  public handlebarsToReadableIntructions(clasifiedText: ReadableInstruction[]): ReadableInstruction[] {
+    let result: ReadableInstruction[] = []
     result = clasifiedText.map(clasifiedTextOrHandlebar => {
       if (clasifiedTextOrHandlebar.type === 'handlebar') {
-        
+        clasifiedTextOrHandlebar = handlebarToInstruction(clasifiedTextOrHandlebar)
       }
-
       return clasifiedTextOrHandlebar
     })
     return result
+  }
+
+  public translateHandlebarToInstructions(viewablePhraseIndex: number): void {
+    const handlebar = this.viewablePhrases[viewablePhraseIndex].value as string;
+    const clasifiedText = this.clasificateStringBeetweenTextAndHandlebars(handlebar)
+    const readableInstructions = this.handlebarsToReadableIntructions(clasifiedText)
+    console.log(readableInstructions)
+    this.showModal.data = readableInstructions
   }
 }
 
 interface ShowModal {
   showModal: boolean,
   phraseIndex: number,
-  modalPostion: { x: number, y: number }
-}
-
-interface ClafisifiedTextOrHandlebar {
-  type: 'text' | 'handlebar'
-  value: string,
-  margin: number
+  modalPostion: { x: number, y: number },
+  data: ReadableInstruction[]|undefined
 }
