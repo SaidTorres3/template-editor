@@ -38,6 +38,7 @@ export const ifHandler = (handlebar: ReadableInstruction): ReadableInstruction =
 
   handlebar.value = `Si ${handlebar.value}, imprimir:`
   handlebar.handlebarType = 'if'
+  handlebar.margin = handlebar.margin - 30
   return handlebar
 }
 

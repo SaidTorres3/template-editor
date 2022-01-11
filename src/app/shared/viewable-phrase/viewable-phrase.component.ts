@@ -37,7 +37,7 @@ export class ViewablePhraseComponent implements OnInit {
     let margin = 0;
     let stringStorage = ''
     for (let i = 0; i < text.length; i++) {
-      const textFragment = text.substr(i, startHandlebar.length);
+      const textFragment = text.substring(i, i + startHandlebar.length);
       if (textFragment === startHandlebar) {
         if (stringStorage) {
           result.push({
@@ -47,13 +47,13 @@ export class ViewablePhraseComponent implements OnInit {
           });
         }
         stringStorage = text[i];
-        if (text.substr(i + 2, 1) === '/') {
+        if (text.substring(i + 2, i + 3) === '/') {
           margin -= marginAmount;
-        } else if (text.substr(i + 2, 1) === '#') {
+        } else if (text.substring(i + 2, i + 3) === '#') {
           margin += marginAmount;
         }
       } else if (textFragment === endHandlebar) {
-        stringStorage += text.substr(i, endHandlebar.length);
+        stringStorage += text.substring(i, i + endHandlebar.length);
         i = i + endHandlebar.length - 1
         result.push({
           type: 'handlebar',
@@ -92,5 +92,5 @@ interface ShowModal {
   showModal: boolean,
   phraseIndex: number,
   modalPostion: { x: number, y: number },
-  data: ReadableInstruction[]|undefined
+  data: ReadableInstruction[] | undefined
 }

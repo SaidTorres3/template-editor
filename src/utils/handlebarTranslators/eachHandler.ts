@@ -13,6 +13,7 @@ export const eachHandler = (handlebar: ReadableInstruction) => {
 
   handlebar.value = `Por cada elemento en ${handlebar.value}, imprimir:`
   handlebar.handlebarType = 'each'
+  handlebar.margin = handlebar.margin - 30
   return handlebar
 }
 

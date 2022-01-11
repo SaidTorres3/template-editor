@@ -15,6 +15,7 @@ export const handlebarToInstruction = (handlebar: ReadableInstruction): Readable
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: elseID })) {
     result.value = "De lo contrario, imprimir:"
     result.handlebarType = "if"
+    result.margin = handlebar.margin - 30
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: eachID })) {
     result = eachHandler(handlebar)
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: closeBlock })) {
