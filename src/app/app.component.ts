@@ -16,7 +16,6 @@ export class AppComponent {
 
   title = 'template-editor';
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
-  @ViewChild('grabableBarData') grabableBarData: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
 
@@ -46,43 +45,37 @@ export class AppComponent {
   }
 
   ngAfterViewInit() {
-    this.fileInputListener()
-    this.clickOnGrabableBarDataListener()
-    this.zoomInContainerListener(this.templateContainer, this.workspace.paperZoom)
-    this.zoomInContainerListener(this.dataContainer, this.workspace.dataZoom)
-    this.fileBackdropHandler()
-    this.historyHandler()
-    this.shiftVListener()
+    this.fileBackdropHandlerListener()
+    this.historyHandlerListener()
+    this.changeModeWithHotkeysListener()
   }
 
-  private clickOnGrabableBarDataListener() {
-    const grabableBarData = this.grabableBarData.nativeElement
-    grabableBarData.onmousedown = (e) => {
-      const startX = e.clientX
-      const startWidth = this.dataContainer.nativeElement.clientWidth
-      window.onmousemove = (e) => {
-        const deltaX = e.clientX - startX
-        const newWidth = startWidth + deltaX
-        this.dataContainer.nativeElement.style.width = `${newWidth}px`
-        const onMouseUp = (e) => {
-          window.onmousemove = null
-          window.onmouseup = null
-        }
-        window.onmouseup = onMouseUp
-      }
-      window.onmouseup = (e) => {
-        window.onmousemove = null
-        window.onmouseup = null
-      }
+  public setTheDocument(inputFile: File) {
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      const data = e.target.result
+      this.docxFile.name = inputFile.name
+      // set last modification date from the file
+      this.docxFile.lastModifiedDate = inputFile.lastModified
+      this.docxFile.content = data
+      docxToEditableObjects(inputFile).then((editableObjects) => {
+        this.editablePhrases = editableObjects.map(a => ({ ...a }));
+        this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
+        this.updatesPhrasesValues()
+      })
     }
+    reader.readAsArrayBuffer(inputFile)
   }
 
-  private fileInputListener() {
-    // get the file content, parse it to editable objects, and set the phrases variables
-    const input = this.uploadFileInput.nativeElement
-    input.onchange = (e) => {
-      this.setTheDocument(input.files[0])
+  public updateTextOfEditablePhrase(inputEvent: InputEvent, index: number) {
+    if (this.modifiedPhrasesHistory.length - 1 > this.workspace.historyIndex) {
+      // keep the begining of the array to the history index
+      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex + 1)
     }
+    const phraseElement = inputEvent.target as HTMLSpanElement;
+    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
+    modifiedPhrases[index].value = phraseElement.innerText
+    this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
   }
 
   public save() {
@@ -106,35 +99,33 @@ export class AppComponent {
     })
   }
 
-  private setTheDocument(inputFile: File) {
-    const reader = new FileReader();
-    reader.onloadend = (e) => {
-      const data = e.target.result
-      this.docxFile.name = inputFile.name
-      // set last modification date from the file
-      this.docxFile.lastModifiedDate = inputFile.lastModified
-      this.docxFile.content = data
-      docxToEditableObjects(inputFile).then((editableObjects) => {
-        this.editablePhrases = editableObjects.map(a => ({ ...a }));
-        this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
-        this.updatesViewValues()
-      })
+  public resizeDataContainerToCursorPosition(e: MouseEvent) {
+    const startX = e.clientX
+    const startWidth = this.dataContainer.nativeElement.clientWidth
+    window.onmousemove = (e) => {
+      const deltaX = e.clientX - startX
+      const newWidth = startWidth + deltaX
+      this.dataContainer.nativeElement.style.width = `${newWidth}px`
+      const onMouseUp = () => {
+        window.onmousemove = null
+        window.onmouseup = null
+      }
+      window.onmouseup = onMouseUp
     }
-    reader.readAsArrayBuffer(inputFile)
+    window.onmouseup = () => {
+      window.onmousemove = null
+      window.onmouseup = null
+    }
   }
 
-  private zoomInContainerListener(divListener: ElementRef<HTMLDivElement>, zoomRef: { value: number }) {
-    const container = divListener.nativeElement
-    // add event lister when ctrl + scroll up
-    container.onwheel = (e) => {
-      if (e.ctrlKey) {
-        e.preventDefault()
-        const delta = e.deltaY
-        if (delta < 0) {
-          this.zoomIn(zoomRef)
-        } else {
-          this.zoomOut(zoomRef)
-        }
+  public makeZoom(e: WheelEvent, zoomRef: { value: number }) {
+    if (e.ctrlKey) {
+      e.preventDefault()
+      const delta = e.deltaY
+      if (delta < 0) {
+        this.zoomIn(zoomRef)
+      } else {
+        this.zoomOut(zoomRef)
       }
     }
   }
@@ -178,7 +169,7 @@ export class AppComponent {
     document.execCommand("insertText", false, text)
   }
 
-  public fileBackdropHandler = () => {
+  public fileBackdropHandlerListener = () => {
     const initCount = -1
     let count = initCount
     window.ondragover = (e) => { e.preventDefault(); }
@@ -209,25 +200,25 @@ export class AppComponent {
   public setMode(mode: string) {
     if (mode === "edit") {
       this.workspace.mode = ViewMode.edit
-      this.updatesViewValues()
+      this.updatesPhrasesValues()
     } else if (mode === "view") {
       this.workspace.mode = ViewMode.view
-      this.updatesViewValues()
+      this.updatesPhrasesValues()
     } else if (mode === 'simulation') {
       this.workspace.mode = ViewMode.simulation
     }
   }
 
-  private updatesViewValues() {
+  private updatesPhrasesValues() {
     this.editablePhrases = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
     this.updateViewablePhrasesValue()
   }
 
   private updateViewablePhrasesValue() {
-    this.viewablePhrases = this.transformPhrasesToViewablePhrases(this.modifiedPhrasesHistory[this.workspace.historyIndex])
+    this.viewablePhrases = this.transformEditablePhrasesToViewablePhrases(this.modifiedPhrasesHistory[this.workspace.historyIndex])
   }
 
-  private shiftVListener() {
+  private changeModeWithHotkeysListener() {
     document.addEventListener('keypress', (e) => {
       // detect when shift + v or shift + V and detect when stop pressing
       if ((e.key === "z" || e.key === "Z") && e.shiftKey) {
@@ -244,7 +235,7 @@ export class AppComponent {
     })
   }
 
-  private transformPhrasesToString = (phrases: EditablePhrase[]): string => {
+  private transformEditablePhrasesToString = (phrases: EditablePhrase[]): string => {
     phrases = phrases.map(a => ({ ...a }));
     let phrasesStringtified = ""
     phrases.forEach((phrase, index) => {
@@ -257,7 +248,7 @@ export class AppComponent {
     return phrasesStringtified
   }
 
-  private getTextAndTagsAsViewablePhrases = (opts: FindTagsOpts): ViewablePhrase[] => {
+  private transformStringToViewablePhrases = (opts: FindTagsOpts): ViewablePhrase[] => {
     const startsAndEnds: FoundedTagsPosition[] = []
     let requirementsToCloseTag: { amountOfClosingTags: number, type: ViewablePhraseType | undefined } = { amountOfClosingTags: 0, type: undefined };
     let startingTagPosition = 0;
@@ -308,24 +299,13 @@ export class AppComponent {
     return viewablePhrases
   }
 
-  private transformPhrasesToViewablePhrases(phrases: EditablePhrase[]): ViewablePhrase[] {
+  private transformEditablePhrasesToViewablePhrases(phrases: EditablePhrase[]): ViewablePhrase[] {
     let priority = 0
-    const phrasesStringtified = this.transformPhrasesToString(phrases)
+    const phrasesStringtified = this.transformEditablePhrasesToString(phrases)
     const findEach: Tag = { startTag: '{{#each', closeTag: '{{/each}}', type: ViewablePhraseType.each, priority: priority++ }
     const findIf: Tag = { startTag: "{{#if", closeTag: "{{/if}}", type: ViewablePhraseType.if, priority: priority++ }
     const findHandlebars: Tag = { startTag: "{{", closeTag: "}}", type: ViewablePhraseType.handlebar, priority: priority++ }
-    return this.getTextAndTagsAsViewablePhrases({ text: phrasesStringtified, tags: [findIf, findEach, findHandlebars] })
-  }
-
-  public updateTextOfPhrase(inputEvent: InputEvent, index: number) {
-    if (this.modifiedPhrasesHistory.length - 1 > this.workspace.historyIndex) {
-      // keep the begining of the array to the history index
-      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex + 1)
-    }
-    const phraseElement = inputEvent.target as HTMLSpanElement;
-    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
-    modifiedPhrases[index].value = phraseElement.innerText
-    this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
+    return this.transformStringToViewablePhrases({ text: phrasesStringtified, tags: [findIf, findEach, findHandlebars] })
   }
 
   public undo = () => {
@@ -354,7 +334,7 @@ export class AppComponent {
     }
   }
 
-  private historyHandler() {
+  private historyHandlerListener() {
     // add event listener to ctrl + z and ctrl + y
     document.addEventListener("keydown", (e) => {
       if (e.ctrlKey) {
