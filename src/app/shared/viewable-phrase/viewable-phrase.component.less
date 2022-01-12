@@ -1,3 +1,9 @@
+* {
+  --if-color: #1196d870;
+  --handlebar-color: #7bd81170;
+  --each-color: #ffae0070;
+}
+
 .viewable-phrase-container {
   position: relative;
   display : inline;
@@ -26,29 +32,29 @@
 }
 
 .viewable-phrase--if {
-  background-color: #1196d870;
+  background-color: var(--if-color);
 }
 
 .viewable-phrase--handlebar {
-  background-color: #7bd81170;
+  background-color: var(--handlebar-color);
 }
 
 .viewable-phrase--each {
-  background-color: #ffae0070;
+  background-color: var(--each-color);
 }
 
 // .readable-intruction { }
 
 .readable-intruction--if {
-  background-color: #f5ef79;
+  background-color: var(--if-color);
 }
 
 .readable-intruction--each {
-  background-color: #fe00fe;
+  background-color: var(--each-color);
 }
 
 .readable-intruction--variable {
-  background-color: #96d84a;
+  background-color: var(--handlebar-color);
 }
 
 .window-modal {

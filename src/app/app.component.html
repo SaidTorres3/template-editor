@@ -29,6 +29,7 @@
   <div class="workspace">
     <div #dataContainer class="workspace__data-container">
       <div class="workspace__data-container__data" [ngStyle]="{'zoom': workspace.dataZoom.value}">
+        <input class="workspace__data-container__search-bar">
         <div *ngIf="objectData">
           <tree-node [node]="objectData"></tree-node>
         </div>
@@ -56,6 +57,7 @@
       </div>
     </div>
   </div>
+  
   <footer class="status-bar">
     <div class="status-bar__zoom-container">
       <div class="status-bar__zoom-container__element" (click)="zoomOut(workspace.dataZoom)">
