@@ -1,6 +1,7 @@
 import { eachHandler } from "./eachHandler";
 import { ifHandler } from "./ifHandler";
 import { ReadableInstruction } from "./types";
+import { variableHandler } from "./variableHandler";
 
 const ifID = '{{#if'
 const elseID = '{{else'
@@ -13,15 +14,15 @@ export const handlebarToInstruction = (handlebar: ReadableInstruction): Readable
   if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: ifID })) {
     result = ifHandler(handlebar)
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: elseID })) {
-    result.value = "De lo contrario, imprimir:"
+    result.value = "De lo contrario, mostrar:"
     result.handlebarType = "if"
-    result.margin = handlebar.margin - 30
+    result.margin = handlebar.margin
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: eachID })) {
     result = eachHandler(handlebar)
   } else if (doesHadlebarMatchID({ txt: handlebar.value, handlebarID: closeBlock })) {
     result.value = ''
   } else {
-    result.handlebarType = 'variable'
+    result = variableHandler(handlebar)
   }
   return result;
 }

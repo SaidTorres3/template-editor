@@ -11,6 +11,7 @@
       *ngIf="showModal.showModal && showModal.phraseIndex === i">
       <div *ngFor="let readableInstruction of showModal.data"
       [style]="'margin-left: '+readableInstruction.margin+'px'"
+      class="readable-intruction"
       [class.readable-intruction--if]="readableInstruction.handlebarType === 'if'" 
       [class.readable-intruction--each]="readableInstruction.handlebarType === 'each'"
       [class.readable-intruction--variable]="readableInstruction.handlebarType === 'variable'"

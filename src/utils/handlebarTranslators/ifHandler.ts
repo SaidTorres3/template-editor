@@ -7,6 +7,7 @@ const matchEqual = /^\(equal\s?([\S]+) '?([\S]+)'?\)$/g;
 const matchOneVariable = /^[\S]+$/g;
 const matchNotOneVariable = /^\(?not [\S]+\)?$/g;
 const matchGreatherThan = /^\(?gt ([\S]+) (\d+)\)?$/g;
+const matchTail = /tail\s?([\S][^\(\)\s]+)/g
 
 export const ifHandler = (handlebar: ReadableInstruction): ReadableInstruction => {
   let insideValue = filterValue(handlebar.value)
@@ -23,7 +24,7 @@ export const ifHandler = (handlebar: ReadableInstruction): ReadableInstruction =
     handlebar.value = translateEqual({ variableName, comparedValue: selectedProp })
   } else if (insideValue.match(matchOneVariable)) {
     insideValue = cleanInsideValue(insideValue)
-    insideValue = insideValue.concat(' contiene valor y no es igual 0')
+    insideValue = insideValue.concat(' contiene valor y no es falso y no es igual 0')
     handlebar.value = insideValue
   } else if (insideValue.match(matchGreatherThan)) {
     const match = matchGreatherThan.exec(insideValue)
@@ -32,11 +33,15 @@ export const ifHandler = (handlebar: ReadableInstruction): ReadableInstruction =
     handlebar.value = `el valor de ${variableName} es mayor a ${selectedProp}`
   } else if (insideValue.match(matchNotOneVariable)) {
     insideValue = cleanInsideValue(insideValue)
-    insideValue = insideValue.concat(' no contiene valor o es igual 0')
+    insideValue = insideValue.concat(' no contiene valor o es falso o es igual 0')
     handlebar.value = insideValue
+  } else if(insideValue.match(matchTail)) {
+    const match = matchTail.exec(insideValue)
+    const variableName = match[1]
+    handlebar.value = `${variableName} contiene valor y no es falso y no es igual 0`
   }
 
-  handlebar.value = `Si ${handlebar.value}, imprimir:`
+  handlebar.value = `Si ${handlebar.value}, entonces mostrar:`
   handlebar.handlebarType = 'if'
   handlebar.margin = handlebar.margin - 30
   return handlebar
