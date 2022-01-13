@@ -61,6 +61,7 @@ export class AppComponent {
       docxToEditableObjects(inputFile).then((editableObjects) => {
         this.editablePhrases = editableObjects.map(a => ({ ...a }));
         this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
+        this.workspace.historyIndex = 0;
         this.updatesPhrasesValues()
       })
     }

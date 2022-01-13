@@ -83,7 +83,6 @@ export class ViewablePhraseComponent implements OnInit {
     const handlebar = this.viewablePhrases[viewablePhraseIndex].value as string;
     const clasifiedText = this.clasificateStringBeetweenTextAndHandlebars(handlebar)
     const readableInstructions = this.handlebarsToReadableIntructions(clasifiedText)
-    console.log(readableInstructions)
     this.showModal.data = readableInstructions
   }
 }
