@@ -4,12 +4,13 @@
     [ngStyle]="{'margin-left': tabulation+'px'}"
     class="not-draggable"
     (mouseover)="showRealPath($event, i)"
-    >
+  >
     <div 
       *ngIf="item.value.title"
       (click)="replaceSelectionWithInnertext($event, item.value.type)"
       class="data-node"
       [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : 'not-primitive-value'"
+      [class.founded]="isFoundedItem(item.value.title, showPath(item))"
       contenteditable="false"
       >{{
         showRealValue && i==actualIndex && (item.value.type | doesStringRepresentPrimitive) && isHovering? 
@@ -20,6 +21,7 @@
         [node]="item.value"
         [tabulation]="((item.value | hasTheseProps:'title':'type') ? tabulationLenght : 0)"
         [path]="pathToSend(item)"
+        [search]="search"
       ></tree-node>
     </ng-container>
   </div>

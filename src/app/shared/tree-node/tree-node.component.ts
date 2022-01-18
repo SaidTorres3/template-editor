@@ -9,13 +9,13 @@ import { DoesStringRepresentPrimitivePipe } from 'src/app/pipes/does-string-repr
 export class TreeNodeComponent {
 
   @ViewChild('treeRoot') treeRoot: ElementRef<HTMLDivElement>;
-
   @Input() node: any;
   @Input() tabulation: number;
   @Input() path: string = '';
+  @Input() search?: string = '';
   public tabulationLenght: number = 20
   public showRealValue = false;
-  public actualIndex: number
+  public actualIndex: number;
   public isHovering: boolean = false;
 
   ngOnInit() {
@@ -48,12 +48,27 @@ export class TreeNodeComponent {
     }
   }
 
+  public isFoundedItem(titleValue: string | undefined, pathValue: string | undefined): boolean {
+    titleValue = titleValue?.trim()?.toLowerCase()?.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    pathValue = pathValue?.trim()?.toLowerCase()?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\./g, ' ')
+    const search = this.search?.trim()?.toLowerCase()?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\./g, ' ')
+    if (titleValue && search) { 
+      const includesInTitle = titleValue.includes(search)
+      if (includesInTitle) { return true }
+      else {
+        if (pathValue && search) {
+          return pathValue.includes(search)
+        }
+      }
+    }
+    return false
+  }
+
   public replaceSelectionWithInnertext(e: MouseEvent, type: string) {
     const primitivizerChecker = new DoesStringRepresentPrimitivePipe()
     const isPrimitive = primitivizerChecker.transform(type)
-    if(!isPrimitive) return
+    if (!isPrimitive) return
     const text = (e.target as HTMLDivElement).innerHTML
     document.execCommand('insertText', true, text)
   }
-
 }

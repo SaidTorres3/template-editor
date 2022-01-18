@@ -16,6 +16,7 @@ export class AppComponent {
   title = 'template-editor';
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('dataContainerData') dataContainerData: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
 
   public workspace: WorkSpace = {
@@ -118,6 +119,14 @@ export class AppComponent {
       const deltaX = e.clientX - startX
       const newWidth = startWidth + deltaX
       this.dataContainer.nativeElement.style.width = `${newWidth}px`
+      if (newWidth > 1600) {
+        this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--three-columns')
+      } else if (newWidth > 1000) {
+        this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--three-columns')
+        this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--two-columns')
+      } else {
+        this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--two-columns')
+      }
       const onMouseUp = () => {
         window.onmousemove = null
         window.onmouseup = null
@@ -209,6 +218,10 @@ export class AppComponent {
     }
   }
 
+  setSearchData(searchData: string) {
+    this.workspace.searchData = searchData
+  }
+
   public setMode(mode: string) {
     if (mode === "edit") {
       this.workspace.mode = ViewMode.edit
@@ -231,18 +244,17 @@ export class AppComponent {
   }
 
   private changeModeWithHotkeysListener() {
-    document.addEventListener('keypress', (e) => {
+    document.addEventListener('keydown', (e) => {
       // detect when shift + v or shift + V and detect when stop pressing
-      if ((e.key === "z" || e.key === "Z") && e.shiftKey) {
+      if ((e.key === "z" || e.key === "Z") && e.shiftKey && e.altKey) {
         e.preventDefault()
-        this.setMode('edit')
-      } else if ((e.key === "x" || e.key === "X") && e.shiftKey) {
+        if (this.workspace.mode !== ViewMode.edit) { this.setMode('edit') }
+      } else if ((e.key === "x" || e.key === "X") && e.shiftKey && e.altKey) {
         e.preventDefault()
-        this.setMode('view')
-      } else if ((e.key === "c" || e.key === "C") && e.shiftKey) {
+        if (this.workspace.mode !== ViewMode.view) { this.setMode('view') }
+      } else if ((e.key === "c" || e.key === "C") && e.shiftKey && e.altKey) {
         e.preventDefault()
-        this.setMode('simulation')
-        // if ctrl + shift
+        if (this.workspace.mode !== ViewMode.simulation) { this.setMode('simulation') }
       }
     })
   }
@@ -376,7 +388,8 @@ interface WorkSpace {
   dataZoom: { value: number },
   mode: ViewMode
   historyIndex: number,
-  currentEditablePhrase: number
+  currentEditablePhrase: number,
+  searchData?: string
 }
 
 enum ViewMode {
