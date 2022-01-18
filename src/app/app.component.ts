@@ -4,7 +4,6 @@ import { docxToString } from 'src/utils/docxParsers/docxToString';
 import { InputFileFormat, EditablePhrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
 import { editableObjectToDocx } from 'src/utils/docxParsers/editableObjectsToDocx';
 import exampleObject from './exampleObject.json';
-import { forEach } from 'jszip';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +25,8 @@ export class AppComponent {
     paperZoom: { value: 1 },
     dataZoom: { value: 1 },
     mode: ViewMode.edit,
-    historyIndex: 0
+    historyIndex: 0,
+    currentEditablePhrase: 0,
   }
 
   public docxFile: DocxFile = {
@@ -77,15 +77,26 @@ export class AppComponent {
     const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
     modifiedPhrases[index].value = phraseElement.innerText
     this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
+    this.workspace.currentEditablePhrase = index
+  }
+
+  public trackByEditablePhrase(index: number, item: EditablePhrase): number {
+    return this.editablePhrases[index].sentenseIndex
   }
 
   public save() {
+    if (!this.docxFile.content) {
+      return
+    }
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
       this.setTheDocument(newDocx)
     })
   }
 
   public saveToComputer() {
+    if (!this.docxFile.content) {
+      return
+    }
     editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
@@ -365,6 +376,7 @@ interface WorkSpace {
   dataZoom: { value: number },
   mode: ViewMode
   historyIndex: number,
+  currentEditablePhrase: number
 }
 
 enum ViewMode {

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ViewablePhrase } from 'src/utils/docxParsers/types';
 import { handlebarToInstruction } from 'src/utils/handlebarTranslators/handlebarToReadableInstruction';
 import { ReadableInstruction } from 'src/utils/handlebarTranslators/types';
+import { clasificateStringBetweenTextAndHandlebars } from 'src/utils/handlebarTranslators/clasificateStringBetweenTextAndHandlebars';
 
 @Component({
   selector: 'viewable-phrase',
@@ -29,45 +30,6 @@ export class ViewablePhraseComponent implements OnInit {
     this.translateHandlebarToInstructions(phraseIndex)
   }
 
-  public clasificateStringBeetweenTextAndHandlebars(text: string): ReadableInstruction[] {
-    let result: ReadableInstruction[] = [];
-    const startHandlebar = '{{';
-    const endHandlebar = '}}';
-    const marginAmount = 30;
-    let margin = 0;
-    let stringStorage = ''
-    for (let i = 0; i < text.length; i++) {
-      const textFragment = text.substring(i, i + startHandlebar.length);
-      if (textFragment === startHandlebar) {
-        if (stringStorage) {
-          result.push({
-            type: 'text',
-            value: stringStorage,
-            margin: margin
-          });
-        }
-        stringStorage = text[i];
-        if (text.substring(i + 2, i + 3) === '/') {
-          margin -= marginAmount;
-        } else if (text.substring(i + 2, i + 3) === '#') {
-          margin += marginAmount;
-        }
-      } else if (textFragment === endHandlebar) {
-        stringStorage += text.substring(i, i + endHandlebar.length);
-        i = i + endHandlebar.length - 1
-        result.push({
-          type: 'handlebar',
-          value: stringStorage,
-          margin: margin
-        });
-        stringStorage = "";
-      } else {
-        stringStorage += text[i]
-      }
-    }
-    return result
-  }
-
   public handlebarsToReadableIntructions(clasifiedText: ReadableInstruction[]): ReadableInstruction[] {
     let result: ReadableInstruction[] = []
     result = clasifiedText.map(clasifiedTextOrHandlebar => {
@@ -81,7 +43,7 @@ export class ViewablePhraseComponent implements OnInit {
 
   public translateHandlebarToInstructions(viewablePhraseIndex: number): void {
     const handlebar = this.viewablePhrases[viewablePhraseIndex].value as string;
-    const clasifiedText = this.clasificateStringBeetweenTextAndHandlebars(handlebar)
+    const clasifiedText = clasificateStringBetweenTextAndHandlebars(handlebar)
     const readableInstructions = this.handlebarsToReadableIntructions(clasifiedText)
     this.showModal.data = readableInstructions
   }

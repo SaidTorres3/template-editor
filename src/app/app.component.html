@@ -10,8 +10,8 @@
   <div class="header">
     <input #uploadFileInput (change)="setTheDocument($event.srcElement.files[0])" class="invisible" type="file" id="template" name="template" accept=".docx">
     <div *ngIf="workspace.fileDropDown" class="header__element__dropdown">
-      <p class="header__element__dropdown__item" (click)="save()">Guardar</p>
-      <p class="header__element__dropdown__item" (click)="saveToComputer()">Guardar a computadora</p>
+      <p class="header__element__dropdown__item" [class.header__element__dropdown__item--inactive]="!docxFile.content" (click)="save()">Guardar</p>
+      <p class="header__element__dropdown__item" [class.header__element__dropdown__item--inactive]="!docxFile.content" (click)="saveToComputer()">Guardar a computadora</p>
       <p class="header__element__dropdown__item" (click)="uploadFileInput.click()">Abrir template</p>
     </div>
     <div class="header__element header__element--file" (click)="fileDropDownToggle()">
@@ -27,23 +27,28 @@
   </div>
 
   <div class="workspace">
-    <div #dataContainer class="workspace__data-container" (wheel)="makeZoom($event, workspace.dataZoom)">
-      <div class="workspace__data-container__data" [ngStyle]="{'zoom': workspace.dataZoom.value}">
-        <input class="workspace__data-container__search-bar">
-        <div *ngIf="objectData">
+    <div #dataContainer class="workspace__data" (wheel)="makeZoom($event, workspace.dataZoom)">
+      <div class="workspace__data__data-container" [ngStyle]="{'zoom': workspace.dataZoom.value}">
+        <input class="workspace__data__search-bar">
+        <div class="workspace__data__data-container__data" *ngIf="objectData">
           <tree-node [node]="objectData"></tree-node>
         </div>
       </div>
-      <div #grabableBarData class="workspace__data-container__grabable-bar" (mousedown)="resizeDataContainerToCursorPosition($event)"></div>
+      <div #grabableBarData class="workspace__data__grabable-bar" (mousedown)="resizeDataContainerToCursorPosition($event)"></div>
     </div>
 
     <div #templateContainer class="workspace__template" (wheel)="makeZoom($event, workspace.paperZoom)">
+      <div class="workspace__template__import" *ngIf="!editablePhrases.length">
+        <h2 (click)="uploadFileInput.click()" class="workspace__template__import__text">
+          Importa un template o un documento de Word  
+        </h2>
+      </div>
       <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
-        <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
+        <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)" *ngIf="editablePhrases.length">
           <div *ngIf="editablePhrases.length > 0 && workspace.mode === 'edit'">
             <ng-container *ngFor="let phrase of editablePhrases; let index = index">
               <br *ngIf="editablePhrases[index-1] && editablePhrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-              <span *ngIf="phrase.value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
+              <span *ngIf="phrase. value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
                 contentEditable="true" (input)="updateTextOfEditablePhrase($event, index)"
                 (paste)="pasteContentWithoutStylesAndEnters($event)"
                 (dragover)="$event.preventDefault()">{{phrase.value}}</span>
