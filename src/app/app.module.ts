@@ -8,6 +8,7 @@ import { DoesStringRepresentPrimitivePipe } from './pipes/does-string-represent-
 import { EntersToBrPipe } from './pipes/enters-to-br.pipe';
 import { ViewablePhraseComponent } from './shared/viewable-phrase/viewable-phrase.component';
 import { IsArrayPipe } from './pipes/is-array.pipe';
+import { FocusDirective } from './directives/focus.directive';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { IsArrayPipe } from './pipes/is-array.pipe';
     DoesStringRepresentPrimitivePipe,
     EntersToBrPipe,
     ViewablePhraseComponent,
-    IsArrayPipe
+    IsArrayPipe,
+    FocusDirective
   ],
   imports: [
     BrowserModule

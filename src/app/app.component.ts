@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { docxToEditableObjects } from 'src/utils/docxParsers/docxToEditableObjects';
 import { docxToString } from 'src/utils/docxParsers/docxToString';
 import { InputFileFormat, EditablePhrase, ViewablePhrase, ViewablePhraseType } from 'src/utils/docxParsers/types';
@@ -15,9 +15,11 @@ export class AppComponent {
 
   title = 'template-editor';
   @ViewChild('uploadFileInput') uploadFileInput: ElementRef<HTMLInputElement>;
+  @ViewChild('dataElement') dataElement: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
   @ViewChild('dataContainerData') dataContainerData: ElementRef<HTMLDivElement>;
   @ViewChild('templateContainer') templateContainer: ElementRef<HTMLDivElement>;
+  @ViewChildren('editablePhraseSpanElement') editablePhraseSpanElement: QueryList<ElementRef<HTMLSpanElement>>;
 
   public workspace: WorkSpace = {
     dropingFile: false,
@@ -27,7 +29,7 @@ export class AppComponent {
     dataZoom: { value: 1 },
     mode: ViewMode.edit,
     historyIndex: 0,
-    currentEditablePhrase: 0,
+    lastModifiedEditablePhraseIndex: 0,
   }
 
   public docxFile: DocxFile = {
@@ -39,7 +41,7 @@ export class AppComponent {
   public objectData: any;
   public editablePhrases: EditablePhrase[] = [];
   public viewablePhrases: ViewablePhrase[] = [];
-  public modifiedPhrasesHistory: EditablePhrase[][] = [];
+  private history: History[] = []
 
   ngOnInit() {
     this.objectData = exampleObject;
@@ -61,7 +63,7 @@ export class AppComponent {
       this.docxFile.content = data
       docxToEditableObjects(inputFile).then((editableObjects) => {
         this.editablePhrases = editableObjects.map(a => ({ ...a }));
-        this.modifiedPhrasesHistory = [editableObjects.map(a => ({ ...a }))];
+        this.history = [{editablePhrases: editableObjects.map(a => ({ ...a })), lastModifiedEditablePhraseIndex: 0}];
         this.workspace.historyIndex = 0;
         this.updatesPhrasesValues()
       })
@@ -69,27 +71,25 @@ export class AppComponent {
     reader.readAsArrayBuffer(inputFile)
   }
 
-  public updateTextOfEditablePhrase(inputEvent: InputEvent, index: number) {
-    if (this.modifiedPhrasesHistory.length - 1 > this.workspace.historyIndex) {
+  public updateTextOfEditablePhrase(inputEvent: InputEvent, editablePhraseIndex: number) {
+    const doesHistoryIndexIsPosibleInHistory = this.workspace.historyIndex < this.history.length - 1
+    if (doesHistoryIndexIsPosibleInHistory) {
       // keep the begining of the array to the history index
-      this.modifiedPhrasesHistory = this.modifiedPhrasesHistory.slice(0, this.workspace.historyIndex + 1)
+      this.history = this.history.slice(0, this.workspace.historyIndex + 1)
     }
     const phraseElement = inputEvent.target as HTMLSpanElement;
-    const modifiedPhrases = this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1].map(a => ({ ...a }));
-    modifiedPhrases[index].value = phraseElement.innerText
-    this.workspace.historyIndex = this.modifiedPhrasesHistory.push([...modifiedPhrases].map(a => ({ ...a }))) - 1
-    this.workspace.currentEditablePhrase = index
-  }
-
-  public trackByEditablePhrase(index: number, item: EditablePhrase): number {
-    return this.editablePhrases[index].sentenseIndex
+    const modifiedPhrasesFromHistory = this.history[this.history.length - 1].editablePhrases.map(a => ({ ...a }));
+    modifiedPhrasesFromHistory[editablePhraseIndex].value = phraseElement.innerText
+    this.workspace.lastModifiedEditablePhraseIndex = editablePhraseIndex
+    this.history.push({ editablePhrases: [...modifiedPhrasesFromHistory].map(a => ({ ...a })), lastModifiedEditablePhraseIndex: editablePhraseIndex })
+    this.workspace.historyIndex = this.history.length - 1
   }
 
   public save() {
     if (!this.docxFile.content) {
       return
     }
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.history[this.history.length - 1].editablePhrases, fileIn: this.docxFile.content }).then((newDocx) => {
       this.setTheDocument(newDocx)
     })
   }
@@ -98,7 +98,7 @@ export class AppComponent {
     if (!this.docxFile.content) {
       return
     }
-    editableObjectToDocx({ modifiedObjects: this.modifiedPhrasesHistory[this.modifiedPhrasesHistory.length - 1], fileIn: this.docxFile.content }).then((newDocx) => {
+    editableObjectToDocx({ modifiedObjects: this.history[this.workspace.historyIndex].editablePhrases, fileIn: this.docxFile.content }).then((newDocx) => {
       const url = URL.createObjectURL(newDocx)
       const link = document.createElement('a')
       link.href = url
@@ -114,19 +114,12 @@ export class AppComponent {
 
   public resizeDataContainerToCursorPosition(e: MouseEvent) {
     const startX = e.clientX
-    const startWidth = this.dataContainer.nativeElement.clientWidth
+    const startWidth = this.dataElement.nativeElement.clientWidth
     window.onmousemove = (e) => {
       const deltaX = e.clientX - startX
       const newWidth = startWidth + deltaX
-      this.dataContainer.nativeElement.style.width = `${newWidth}px`
-      if (newWidth > 1600) {
-        this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--three-columns')
-      } else if (newWidth > 1000) {
-        this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--three-columns')
-        this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--two-columns')
-      } else {
-        this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--two-columns')
-      }
+      this.dataElement.nativeElement.style.width = `${newWidth}px`
+      this.updateDataColumnsAmmount()
       const onMouseUp = () => {
         window.onmousemove = null
         window.onmouseup = null
@@ -139,10 +132,24 @@ export class AppComponent {
     }
   }
 
+  private updateDataColumnsAmmount() {
+    const newWidth = this.dataElement.nativeElement.clientWidth
+    if (newWidth > 1700) {
+      this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--three-columns')
+    } else if (newWidth > 1000) {
+      this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--three-columns')
+      this.dataContainerData.nativeElement.classList.add('workspace__data__data-container__data--two-columns')
+    } else if (newWidth < 1000) {
+      this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--three-columns')
+      this.dataContainerData.nativeElement.classList.remove('workspace__data__data-container__data--two-columns')
+    }
+  }
+
   public makeZoom(e: WheelEvent, zoomRef: { value: number }) {
     if (e.ctrlKey) {
       e.preventDefault()
       const delta = e.deltaY
+      this.updateDataColumnsAmmount()
       if (delta < 0) {
         this.zoomIn(zoomRef)
       } else {
@@ -201,7 +208,7 @@ export class AppComponent {
         count++
       }
     }
-    window.ondragleave = (e) => {
+    window.ondragleave = () => {
       count--
       if (count < 0) {
         this.workspace.dropingFile = false
@@ -218,7 +225,7 @@ export class AppComponent {
     }
   }
 
-  setSearchData(searchData: string) {
+  public searchInData(searchData: string) {
     this.workspace.searchData = searchData
   }
 
@@ -235,12 +242,26 @@ export class AppComponent {
   }
 
   private updatesPhrasesValues() {
-    this.editablePhrases = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+    this.updateEditablePhrasesValue()
     this.updateViewablePhrasesValue()
   }
-
+  
+  private updateEditablePhrasesValue() {
+    this.workspace.lastModifiedEditablePhraseIndex = this.history[this.workspace.historyIndex].lastModifiedEditablePhraseIndex
+    this.editablePhrases = this.history[this.workspace.historyIndex].editablePhrases.map(a => ({ ...a }));
+  }
+  
   private updateViewablePhrasesValue() {
-    this.viewablePhrases = this.transformEditablePhrasesToViewablePhrases(this.modifiedPhrasesHistory[this.workspace.historyIndex])
+    const updatedViewablePhrases = this.transformEditablePhrasesToViewablePhrases(this.history[this.workspace.historyIndex].editablePhrases)
+    if(this.viewablePhrases.length === updatedViewablePhrases.length) {
+      updatedViewablePhrases.forEach((updatedViewablePhrase, index) => {
+        if(this.viewablePhrases[index].value !== updatedViewablePhrase.value) {
+          this.viewablePhrases[index].value = updatedViewablePhrase.value
+        }
+      })
+    } else {
+      this.viewablePhrases = this.transformEditablePhrasesToViewablePhrases(this.history[this.workspace.historyIndex].editablePhrases)
+    }
   }
 
   private changeModeWithHotkeysListener() {
@@ -334,24 +355,28 @@ export class AppComponent {
 
   public undo = () => {
     if (this.workspace.historyIndex > 0) {
-      const test = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+      const editablePhrasesFromLastestElementInHistory = this.history[this.workspace.historyIndex].editablePhrases.map(a => ({ ...a }));
+      this.workspace.lastModifiedEditablePhraseIndex = this.history[this.workspace.historyIndex].lastModifiedEditablePhraseIndex
       this.workspace.historyIndex--
-      test.map((phrase, index) => {
-        if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
-          this.editablePhrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
+      editablePhrasesFromLastestElementInHistory.map((editablePhrase, index) => {
+        const editablePhraseFromHistory = this.history[this.workspace.historyIndex].editablePhrases[index]
+        if (editablePhrase.value !== editablePhraseFromHistory.value) {
+          this.editablePhrases[index] = { ...this.history[this.workspace.historyIndex].editablePhrases[index] }
         }
       })
       this.updateViewablePhrasesValue()
     }
   }
-
+  
   public redo = () => {
-    if (this.workspace.historyIndex + 1 <= this.modifiedPhrasesHistory.length - 1) {
-      const test = this.modifiedPhrasesHistory[this.workspace.historyIndex].map(a => ({ ...a }));
+    if (this.workspace.historyIndex + 1 <= this.history.length - 1) {
+      const editablePhrasesFromLastestElementInHistory = this.history[this.workspace.historyIndex].editablePhrases.map(a => ({ ...a }));
       this.workspace.historyIndex++
-      test.map((phrase, index) => {
-        if (phrase.value !== this.modifiedPhrasesHistory[this.workspace.historyIndex][index].value) {
-          this.editablePhrases[index] = { ...this.modifiedPhrasesHistory[this.workspace.historyIndex][index] }
+      this.workspace.lastModifiedEditablePhraseIndex = this.history[this.workspace.historyIndex].lastModifiedEditablePhraseIndex
+      editablePhrasesFromLastestElementInHistory.map((editablePhrase, index) => {
+        const editablePhraseFromHistory = this.history[this.workspace.historyIndex].editablePhrases[index]
+        if (editablePhrase.value !== editablePhraseFromHistory.value) {
+          this.editablePhrases[index] = { ...editablePhraseFromHistory }
         }
       })
       this.updateViewablePhrasesValue()
@@ -388,7 +413,7 @@ interface WorkSpace {
   dataZoom: { value: number },
   mode: ViewMode
   historyIndex: number,
-  currentEditablePhrase: number,
+  lastModifiedEditablePhraseIndex: number
   searchData?: string
 }
 
@@ -396,6 +421,11 @@ enum ViewMode {
   edit = "edit",
   view = "view",
   simulation = "simulation"
+}
+
+interface History {
+  editablePhrases: EditablePhrase[],
+  lastModifiedEditablePhraseIndex: number
 }
 
 interface FindTagsOpts {

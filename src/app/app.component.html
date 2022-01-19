@@ -27,9 +27,9 @@
   </div>
 
   <div class="workspace">
-    <div #dataContainer class="workspace__data" (wheel)="makeZoom($event, workspace.dataZoom)">
-      <div class="workspace__data__data-container" [ngStyle]="{'zoom': workspace.dataZoom.value}">
-        <input class="workspace__data__search-bar" (input)="setSearchData($event.target.value)">
+    <div #dataElement class="workspace__data" (wheel)="makeZoom($event, workspace.dataZoom)">
+      <div #dataContainer class="workspace__data__data-container" [ngStyle]="{'zoom': workspace.dataZoom.value}">
+        <input class="workspace__data__search-bar" (input)="searchInData($event.target.value)">
         <div #dataContainerData class="workspace__data__data-container__data" *ngIf="objectData">
           <tree-node [node]="objectData" [search]="workspace.searchData"></tree-node>
         </div>
@@ -48,10 +48,17 @@
           <div *ngIf="editablePhrases.length > 0 && workspace.mode === 'edit'">
             <ng-container *ngFor="let phrase of editablePhrases; let index = index">
               <br *ngIf="editablePhrases[index-1] && editablePhrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-              <span *ngIf="phrase. value !== '\r\n'" class="workspace__template__paper-container__paper__phrase"
-                contentEditable="true" (input)="updateTextOfEditablePhrase($event, index)"
+              <span #editablePhraseSpanElement 
+                *ngIf="phrase. value !== '\r\n'"
+                class="workspace__template__paper-container__paper__phrase"
+                contentEditable="true"
+                (input)="updateTextOfEditablePhrase($event, index)"
                 (paste)="pasteContentWithoutStylesAndEnters($event)"
-                (dragover)="$event.preventDefault()">{{phrase.value}}</span>
+                (dragover)="$event.preventDefault()"
+                [focus]="workspace.lastModifiedEditablePhraseIndex === index"
+                [class.workspace__template__paper-container__paper__phrase--selected]="workspace.lastModifiedEditablePhraseIndex === index"
+                (focus)="workspace.mode"
+              >{{phrase.value}}</span>
             </ng-container>
           </div>
 
