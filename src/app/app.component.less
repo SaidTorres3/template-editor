@@ -125,7 +125,7 @@ body {
 .workspace__data {
   height        : 100%;
   width         : 300px;
-  min-width     : 300px;
+  min-width     : 60px;
   position      : relative;
   display       : flex;
   z-index       : 1000;
@@ -229,8 +229,13 @@ body {
   line-height    : 25px;
 }
 
+.workspace__template__paper-container--double-paper {
+  min-width: calc(var(--legalSizeSheet-width) * 2 + 100px);
+}
+
 .workspace__template__paper-container__paper {
   width           : var(--legalSizeSheet-width);
+  min-width       : var(--legalSizeSheet-width);
   min-height      : var(--legalSizeSheet-height);
   background-color: var(--elements-color);
   box-shadow      : 0px 0px 10px rgba(0, 0, 0, 0.3);
@@ -248,11 +253,6 @@ body {
   line-height  : 23px;
   display      : inline;
   resize       : none;
-}
-
-.workspace__template__paper-container__paper__phrase--selected {
-  // outline-color: #1196d8;
-  // background-color: red;
 }
 
 .status-bar {

@@ -43,9 +43,11 @@
           Importa un template o un documento de Word  
         </h2>
       </div>
-      <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}">
-        <div #paper class="workspace__template__paper-container__paper" (keypress)="enterListener($event)" *ngIf="editablePhrases.length">
-          <div *ngIf="editablePhrases.length > 0 && workspace.mode === 'edit'">
+      <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}"
+      [class.workspace__template__paper-container--double-paper]="workspace.mode === 'editView'"
+      >
+        <div #paper *ngIf="(workspace.mode === 'edit' || workspace.mode === 'editView') && editablePhrases.length" class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
+          <div *ngIf="editablePhrases.length > 0">
             <ng-container *ngFor="let phrase of editablePhrases; let index = index">
               <br *ngIf="editablePhrases[index-1] && editablePhrases[index-1].paragraphIndex < phrase.paragraphIndex" />
               <span #editablePhraseSpanElement 
@@ -61,8 +63,9 @@
               >{{phrase.value}}</span>
             </ng-container>
           </div>
-
-          <div *ngIf="workspace.mode === 'view' && viewablePhrases">
+        </div>
+        <div #paper *ngIf="(workspace.mode === 'view' || workspace.mode === 'editView') && editablePhrases.length" class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
+          <div *ngIf="viewablePhrases">
             <viewable-phrase [viewablePhrases]="viewablePhrases"></viewable-phrase>
           </div>
         </div>
@@ -86,11 +89,11 @@
     <div class="status-bar__mode-container">
       <div class="status-bar__mode-container__item" style="cursor: default;">Modo: </div>
       <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='edit' ? 'status-bar__mode-container__item--selected' : undefined"
-        (click)="setMode('edit')">Edición</div>
+        [class]="workspace.mode==='edit'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
+        (click)="!$event.shiftKey ? setMode('edit') : setMode('editView')">Edición</div>
       <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='view' ? 'status-bar__mode-container__item--selected' : undefined"
-        (click)="setMode('view')">Vista</div>
+        [class]="workspace.mode==='view'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
+        (click)="!$event.shiftKey ? setMode('view') : setMode('editView')">Vista</div>
       <div class="status-bar__mode-container__item"
         [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined"
         (click)="setMode('simulation')">Simulación

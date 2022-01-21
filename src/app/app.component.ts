@@ -62,13 +62,17 @@ export class AppComponent {
       this.docxFile.lastModifiedDate = inputFile.lastModified
       this.docxFile.content = data
       docxToEditableObjects(inputFile).then((editableObjects) => {
-        this.editablePhrases = editableObjects.map(a => ({ ...a }));
-        this.history = [{editablePhrases: editableObjects.map(a => ({ ...a })), lastModifiedEditablePhraseIndex: 0}];
-        this.workspace.historyIndex = 0;
-        this.updatesPhrasesValues()
+        this.setter(editableObjects)
       })
     }
     reader.readAsArrayBuffer(inputFile)
+  }
+
+  private setter(editableObjects: EditablePhrase[]) {
+    this.editablePhrases = editableObjects.map(a => ({ ...a }));
+    this.history = [{ editablePhrases: editableObjects.map(a => ({ ...a })), lastModifiedEditablePhraseIndex: 0 }];
+    this.workspace.historyIndex = 0;
+    this.updatesPhrasesValues()
   }
 
   public updateTextOfEditablePhrase(inputEvent: InputEvent, editablePhraseIndex: number) {
@@ -83,6 +87,7 @@ export class AppComponent {
     this.workspace.lastModifiedEditablePhraseIndex = editablePhraseIndex
     this.history.push({ editablePhrases: [...modifiedPhrasesFromHistory].map(a => ({ ...a })), lastModifiedEditablePhraseIndex: editablePhraseIndex })
     this.workspace.historyIndex = this.history.length - 1
+    this.updateViewablePhrasesValue()
   }
 
   public save() {
@@ -230,14 +235,19 @@ export class AppComponent {
   }
 
   public setMode(mode: string) {
-    if (mode === "edit") {
+    if (mode === ViewMode.edit) {
       this.workspace.mode = ViewMode.edit
       this.updatesPhrasesValues()
-    } else if (mode === "view") {
+    } else if (mode === ViewMode.view) {
       this.workspace.mode = ViewMode.view
       this.updatesPhrasesValues()
-    } else if (mode === 'simulation') {
+    } else if (mode === ViewMode.simulation) {
       this.workspace.mode = ViewMode.simulation
+    } else if (mode === ViewMode.editView) {
+      this.workspace.mode = ViewMode.editView
+      if(this.workspace.paperZoom.value >= 1 ) {
+        this.workspace.paperZoom.value = 0.9
+      }
     }
   }
 
@@ -245,17 +255,17 @@ export class AppComponent {
     this.updateEditablePhrasesValue()
     this.updateViewablePhrasesValue()
   }
-  
+
   private updateEditablePhrasesValue() {
     this.workspace.lastModifiedEditablePhraseIndex = this.history[this.workspace.historyIndex].lastModifiedEditablePhraseIndex
     this.editablePhrases = this.history[this.workspace.historyIndex].editablePhrases.map(a => ({ ...a }));
   }
-  
+
   private updateViewablePhrasesValue() {
     const updatedViewablePhrases = this.transformEditablePhrasesToViewablePhrases(this.history[this.workspace.historyIndex].editablePhrases)
-    if(this.viewablePhrases.length === updatedViewablePhrases.length) {
+    if (this.viewablePhrases.length === updatedViewablePhrases.length) {
       updatedViewablePhrases.forEach((updatedViewablePhrase, index) => {
-        if(this.viewablePhrases[index].value !== updatedViewablePhrase.value) {
+        if (this.viewablePhrases[index].value !== updatedViewablePhrase.value) {
           this.viewablePhrases[index].value = updatedViewablePhrase.value
         }
       })
@@ -367,7 +377,7 @@ export class AppComponent {
       this.updateViewablePhrasesValue()
     }
   }
-  
+
   public redo = () => {
     if (this.workspace.historyIndex + 1 <= this.history.length - 1) {
       const editablePhrasesFromLastestElementInHistory = this.history[this.workspace.historyIndex].editablePhrases.map(a => ({ ...a }));
@@ -420,7 +430,8 @@ interface WorkSpace {
 enum ViewMode {
   edit = "edit",
   view = "view",
-  simulation = "simulation"
+  simulation = "simulation",
+  editView = "editView"
 }
 
 interface History {
