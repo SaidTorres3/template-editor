@@ -1,0 +1,16 @@
+<ng-container *ngFor="let editablePhrase of editablePhrases; let index = index">
+  <br
+    *ngIf="editablePhrases[index-1] && editablePhrases[index-1].paragraphIndex < editablePhrase.paragraphIndex"
+  />
+  <span
+    *ngIf="editablePhrase.value !== '\r\n'"
+    class="editable-phrase"
+    contentEditable="true"
+    (input)="onEdtitablePhraseChanged($event, index)"
+    (paste)="pasteContentWithoutStylesAndEnters($event)"
+    (dragover)="$event.preventDefault()"
+    [focus]="workspace.lastModifiedEditablePhraseIndex === index"
+    [class.workspace__template__paper-container__paper__phrase--selected]="workspace.lastModifiedEditablePhraseIndex === index"
+    >{{editablePhrase.value}}</span
+  >
+</ng-container>

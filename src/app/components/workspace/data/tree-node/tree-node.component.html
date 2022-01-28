@@ -1,21 +1,27 @@
-<div #treeRoot *ngIf="node" (mouseenter)="setHovering(true)" (mouseleave)="setHovering(false)">
+<div
+  #treeRoot
+  *ngIf="node"
+  (mouseenter)="setHovering(true)"
+  (mouseleave)="setHovering(false)"
+>
   <div
-    #element *ngFor="let item of node | keyvalue, let i = index"
+    #element
+    *ngFor="let item of node | keyvalue, let i = index"
     [ngStyle]="{'margin-left': tabulation+'px'}"
     class="not-draggable"
     (mouseover)="showRealPath($event, i)"
   >
-    <div 
+    <div
       *ngIf="item.value.title"
       (click)="replaceSelectionWithInnertext($event, item.value.type)"
       class="data-node"
       [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : 'not-primitive-value'"
       [class.founded]="isFoundedItem(item.value.title, showPath(item))"
       contenteditable="false"
-      >{{
-        showRealValue && i==actualIndex && (item.value.type | doesStringRepresentPrimitive) && isHovering? 
-          showPath(item) : (item.value.title)
-      }}</div>
+      >{{ showRealValue && i==actualIndex && (item.value.type |
+      doesStringRepresentPrimitive) && isHovering? showPath(item) :
+      (item.value.title) }}</div
+    >
     <ng-container *ngIf="item.value | isObject">
       <tree-node
         [node]="item.value"

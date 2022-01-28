@@ -1,117 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" style="box-sizing: border-box;">
-<body>
-  <div *ngIf="workspace.dropingFile" class="backdrop" (wheel)="$event.preventDefault()">
-    <div class="backdrop__drop-file-msg">
-      Abrir template
-    </div>
-  </div>
+<html lang="es" style="box-sizing: border-box;">
+  <body>
+    <input
+      #uploadFileInput
+      (change)="setTemplateFromFile($event.srcElement.files[0])"
+      class="invisible"
+      type="file"
+      id="template"
+      name="template"
+      accept=".docx"
+    />
 
-  <div class="header">
-    <input #uploadFileInput (change)="setTheDocument($event.srcElement.files[0])" class="invisible" type="file" id="template" name="template" accept=".docx">
-    <div *ngIf="workspace.fileDropDown" class="header__element__dropdown">
-      <p class="header__element__dropdown__item" [class.header__element__dropdown__item--inactive]="!docxFile.content" (click)="save()">Guardar</p>
-      <p class="header__element__dropdown__item" [class.header__element__dropdown__item--inactive]="!docxFile.content" (click)="saveToComputer()">Guardar a computadora</p>
-      <p class="header__element__dropdown__item" (click)="uploadFileInput.click()">Abrir template</p>
-    </div>
-    <div class="header__element header__element--file" (click)="fileDropDownToggle()">
-      <label>Archivo</label>
-    </div>
-    <div class="header__element header__element--title">
-      {{docxFile.name}}
-    </div>
-    <div class="header__element" *ngIf="docxFile.lastModifiedDate">
-      <!-- date with hour -->
-      Última modificación: {{docxFile.lastModifiedDate | date: 'dd/MM/yyyy HH:mm'}}
-    </div>
-  </div>
+    <app-header
+      [workspace]="workspace"
+      [docxFile]="docxFile"
+      [history]="history"
+      [editablePhrases]="editablePhrases"
+      [uploadFileInput]="uploadFileInput"
+      (fileChange)="setTemplateFromFile($event.srcElement.files[0])"
+    ></app-header>
 
-  <div class="workspace">
-    <div #dataElement class="workspace__data" (wheel)="makeZoom($event, workspace.dataZoom)">
-      <div #dataContainer class="workspace__data__data-container" [ngStyle]="{'zoom': workspace.dataZoom.value}">
-        <input class="workspace__data__search-bar" (input)="searchInData($event.target.value)">
-        <div #dataContainerData class="workspace__data__data-container__data" *ngIf="objectData">
-          <tree-node [node]="objectData" [search]="workspace.searchData"></tree-node>
-        </div>
-      </div>
-      <div #grabableBarData class="workspace__data__grabable-bar" (mousedown)="resizeDataContainerToCursorPosition($event)"></div>
-    </div>
+    <app-workspace
+      [objectData]="objectData"
+      [workspace]="workspace"
+      [editablePhrases]="editablePhrases"
+      [fileInput]="uploadFileInput"
+      [viewablePhrases]="viewablePhrases"
+      (editablePhraseChanged)="updateEditablePhrase($event.inputEvent, $event.indexOfEditablePhrase)"
+    ></app-workspace>
 
-    <div #templateContainer class="workspace__template" (wheel)="makeZoom($event, workspace.paperZoom)">
-      <div class="workspace__template__import" *ngIf="!editablePhrases.length">
-        <h2 (click)="uploadFileInput.click()" class="workspace__template__import__text">
-          Importa un template o un documento de Word  
-        </h2>
-      </div>
-      <div class="workspace__template__paper-container" [ngStyle]="{'zoom': workspace.paperZoom.value}"
-      [class.workspace__template__paper-container--double-paper]="workspace.mode === 'editView'"
-      >
-        <div #paper *ngIf="(workspace.mode === 'edit' || workspace.mode === 'editView') && editablePhrases.length" class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
-          <div *ngIf="editablePhrases.length > 0">
-            <ng-container *ngFor="let phrase of editablePhrases; let index = index">
-              <br *ngIf="editablePhrases[index-1] && editablePhrases[index-1].paragraphIndex < phrase.paragraphIndex" />
-              <span #editablePhraseSpanElement 
-                *ngIf="phrase. value !== '\r\n'"
-                class="workspace__template__paper-container__paper__phrase"
-                contentEditable="true"
-                (input)="updateTextOfEditablePhrase($event, index)"
-                (paste)="pasteContentWithoutStylesAndEnters($event)"
-                (dragover)="$event.preventDefault()"
-                [focus]="workspace.lastModifiedEditablePhraseIndex === index"
-                [class.workspace__template__paper-container__paper__phrase--selected]="workspace.lastModifiedEditablePhraseIndex === index"
-                (focus)="workspace.mode"
-              >{{phrase.value}}</span>
-            </ng-container>
-          </div>
-        </div>
-        <div #paper *ngIf="(workspace.mode === 'view' || workspace.mode === 'editView') && editablePhrases.length" class="workspace__template__paper-container__paper" (keypress)="enterListener($event)">
-          <div *ngIf="viewablePhrases">
-            <viewable-phrase [viewablePhrases]="viewablePhrases"></viewable-phrase>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <footer class="status-bar">
-    <div class="status-bar__zoom-container">
-      <div class="status-bar__zoom-container__element" (click)="zoomOut(workspace.dataZoom)">
-        -
-      </div>
-      <div class="status-bar__zoom-container__element" (click)="zoomNormal(workspace.dataZoom)">
-        {{workspace.dataZoom.value * 100 | number}}%
-      </div>
-      <div class="status-bar__zoom-container__element" (click)="zoomIn(workspace.dataZoom)">
-        +
-      </div>
-    </div>
-
-    <div class="status-bar__mode-container">
-      <div class="status-bar__mode-container__item" style="cursor: default;">Modo: </div>
-      <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='edit'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
-        (click)="!$event.shiftKey ? setMode('edit') : setMode('editView')">Edición</div>
-      <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='view'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
-        (click)="!$event.shiftKey ? setMode('view') : setMode('editView')">Vista</div>
-      <div class="status-bar__mode-container__item"
-        [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined"
-        (click)="setMode('simulation')">Simulación
-      </div>
-    </div>
-
-    <div class="status-bar__zoom-container status-bar__zoom-container--right">
-      <div class="status-bar__zoom-container__element" (click)="zoomOut(workspace.paperZoom)">
-        -
-      </div>
-      <div class="status-bar__zoom-container__element" (click)="zoomNormal(workspace.paperZoom)">
-        {{workspace.paperZoom.value * 100 | number}}%
-      </div>
-      <div class="status-bar__zoom-container__element" (click)="zoomIn(workspace.paperZoom)">
-        +
-      </div>
-    </div>
-  </footer>
-</body>
-
+    <app-footer
+      [workspace]="workspace"
+      (clickEditMode)="!$event.shiftKey ? setMode('edit') : setMode('editView')"
+      (clickViewMode)="!$event.shiftKey ? setMode('view') : setMode('editView')"
+      (clickSimulationMode)="setMode('simulation')"
+    ></app-footer>
+  </body>
 </html>

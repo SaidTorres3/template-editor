@@ -4,7 +4,7 @@ import { DoesStringRepresentPrimitivePipe } from 'src/app/pipes/does-string-repr
 @Component({
   selector: 'tree-node',
   templateUrl: './tree-node.component.html',
-  styleUrls: ['./tree-node.component.less']
+  styleUrls: ['./tree-node.component.less', '../../../../shared/styles/commonStyles.less']
 })
 export class TreeNodeComponent {
 

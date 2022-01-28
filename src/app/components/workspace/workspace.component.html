@@ -1,0 +1,44 @@
+    <div class="workspace">
+      <workspace-data [data]="objectData" [workspace]="workspace"></workspace-data>
+      <div
+        #templateContainer
+        class="workspace__template"
+        (wheel)="zoom.makeZoom($event, workspace.paperZoom)"
+      >
+        <div class="workspace__template__import" *ngIf="!editablePhrases.length">
+          <h2 (click)="fileInput.click()" class="workspace__template__import__text">
+            Importa un template o un documento de Word
+          </h2>
+        </div>
+        <div
+          class="workspace__template__paper-container"
+          [ngStyle]="{'zoom': workspace.paperZoom.value}"
+          [class.workspace__template__paper-container--double-paper]="workspace.mode === 'editView'"
+        >
+          <div
+            #paper
+            *ngIf="(workspace.mode === 'edit' || workspace.mode === 'editView') && editablePhrases.length"
+            class="workspace__template__paper-container__paper"
+            (keypress)="disableEnter($event)"
+          >
+            <div *ngIf="editablePhrases.length > 0">
+              <editable-phrases
+                [editablePhrases]="editablePhrases"
+                [workspace]="workspace"
+                (editablePhraseChanged)="onEditablePhraseChanged($event.inputEvent, $event.index)"
+              ></editable-phrases>
+            </div>
+          </div>
+          <div
+            #paper
+            *ngIf="(workspace.mode === 'view' || workspace.mode === 'editView') && editablePhrases.length"
+            class="workspace__template__paper-container__paper"
+            (keypress)="disableEnter($event)"
+          >
+            <div *ngIf="viewablePhrases">
+              <viewable-phrases [viewablePhrases]="viewablePhrases"></viewable-phrases>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
