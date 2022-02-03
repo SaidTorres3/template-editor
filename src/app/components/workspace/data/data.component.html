@@ -3,26 +3,28 @@
   class="workspace__data"
   (wheel)="zoom.makeZoom($event, workspace.dataZoom)"
 >
-  <div
-    #dataContainer
-    class="workspace__data__data-container"
-    [ngStyle]="{'zoom': workspace.dataZoom.value}"
-  >
-    <input
-      class="workspace__data__search-bar"
-      (input)="searchInData($event.target.value)"
-    />
+  <div class="workspace__data__content">
     <div
-      #dataContainerData
-      class="workspace__data__data-container__data"
-      *ngIf="data"
+      [ngStyle]="{'zoom': workspace.dataZoom.value}"
+      #dataContainer
+      class="workspace__data__content__data-container"
     >
-      <tree-node [node]="data" [search]="workspace.searchData"></tree-node>
+      <input
+        class="workspace__data__content__search-bar"
+        (input)="searchInData($event.target.value)"
+      />
+      <div
+        #dataContainerData
+        class="workspace__data__content__data-container__data"
+        *ngIf="data"
+      >
+        <tree-node [node]="data" [search]="workspace.searchData"></tree-node>
+      </div>
     </div>
   </div>
   <div
     #grabableBarData
-    class="workspace__data__grabable-bar"
+    class="workspace__data__content__grabable-bar"
     (mousedown)="resizeDataContainerToCursorPosition($event)"
   ></div>
 </div>
