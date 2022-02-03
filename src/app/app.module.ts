@@ -14,6 +14,7 @@ import { DataComponent } from './components/workspace/data/data.component';
 import { HeaderComponent } from './components/header/header.component';
 import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { SelectionRangeDirective } from './directives/selection-range.directive';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { FooterComponent } from './components/footer/footer.component';
     DataComponent,
     HeaderComponent,
     WorkspaceComponent,
-    FooterComponent
+    FooterComponent,
+    SelectionRangeDirective
   ],
   imports: [
     BrowserModule

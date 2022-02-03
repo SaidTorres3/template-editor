@@ -33,7 +33,7 @@ export class AppComponent {
     mode: ViewMode.edit,
     historyIndex: 0,
     lastModifiedEditablePhraseIndex: 0,
-    lastSelection: undefined,
+    lastSelection: { start: 0, end: 0 },
     needToFocus: false,
   };
 
@@ -98,6 +98,10 @@ export class AppComponent {
       this.history = historyCuttedAfterCurrentIndex;
     }
     const selection = window.getSelection();
+    const selectionRange: SelectionRange = {
+      start: selection.anchorOffset,
+      end: selection.focusOffset,
+    };
     const phraseElement = inputEvent.target as HTMLSpanElement;
     const modifiedPhrasesFromHistory = this.history[
       this.history.length - 1
@@ -107,12 +111,12 @@ export class AppComponent {
     this.history.push({
       editablePhrases: [...modifiedPhrasesFromHistory].map((a) => ({ ...a })),
       lastModifiedEditablePhraseIndex: editablePhraseIndex,
-      selection,
+      selection: selectionRange,
     });
     this.workspace = {
       ...this.workspace,
       lastModifiedEditablePhraseIndex: editablePhraseIndex,
-      lastSelection: selection,
+      lastSelection: selectionRange,
       historyIndex: this.history.length - 1,
     };
     console.log(selection);
@@ -244,13 +248,15 @@ export class AppComponent {
     if (this.workspace.historyIndex > 0) {
       const editablePhrasesFromLastestElementInHistory = this.history[
         this.workspace.historyIndex
-      ].editablePhrases.map((a) => ({
-        ...a,
-      }));
-      this.workspace.lastModifiedEditablePhraseIndex = this.history[
-        this.workspace.historyIndex
-      ].lastModifiedEditablePhraseIndex;
+      ].editablePhrases.map((a) => ({ ...a }));
       this.workspace.historyIndex--;
+      this.workspace = {
+        ...this.workspace,
+        lastModifiedEditablePhraseIndex: this.history[
+          this.workspace.historyIndex
+        ].lastModifiedEditablePhraseIndex,
+        lastSelection: this.history[this.workspace.historyIndex].selection,
+      };
       editablePhrasesFromLastestElementInHistory.map(
         (editablePhrase, index) => {
           const editablePhraseFromHistory = this.history[
@@ -277,9 +283,13 @@ export class AppComponent {
         ...a,
       }));
       this.workspace.historyIndex++;
-      this.workspace.lastModifiedEditablePhraseIndex = this.history[
-        this.workspace.historyIndex
-      ].lastModifiedEditablePhraseIndex;
+      this.workspace = {
+        ...this.workspace,
+        lastModifiedEditablePhraseIndex: this.history[
+          this.workspace.historyIndex
+        ].lastModifiedEditablePhraseIndex,
+        lastSelection: this.history[this.workspace.historyIndex].selection,
+      };
       editablePhrasesFromLastestElementInHistory.map(
         (editablePhrase, index) => {
           const editablePhraseFromHistory = this.history[
@@ -323,9 +333,14 @@ export interface WorkSpace {
   mode: ViewMode;
   historyIndex: number;
   lastModifiedEditablePhraseIndex: number;
-  lastSelection: Selection | undefined;
+  lastSelection: SelectionRange;
   searchData?: string;
   needToFocus: boolean;
+}
+
+export interface SelectionRange {
+  start: number;
+  end: number;
 }
 
 export enum ViewMode {
@@ -338,5 +353,5 @@ export enum ViewMode {
 export interface History {
   editablePhrases: EditablePhrase[];
   lastModifiedEditablePhraseIndex: number;
-  selection?: Selection;
+  selection: SelectionRange;
 }

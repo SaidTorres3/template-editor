@@ -9,7 +9,7 @@
     (input)="onEdtitablePhraseChanged($event, index)"
     (paste)="pasteContentWithoutStylesAndEnters($event)"
     (dragover)="$event.preventDefault()"
-    [focus]="workspace.lastModifiedEditablePhraseIndex === index"
+    [selectionRange]="workspace.lastModifiedEditablePhraseIndex === index ? workspace.lastSelection : undefined"
     [class.workspace__template__paper-container__paper__phrase--selected]="workspace.lastModifiedEditablePhraseIndex === index"
     >{{editablePhrase.value}}</span
   >
