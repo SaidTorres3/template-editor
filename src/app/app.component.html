@@ -26,7 +26,7 @@
       [editablePhrases]="editablePhrases"
       [fileInput]="uploadFileInput"
       [viewablePhrases]="viewablePhrases"
-      (editablePhraseChanged)="updateEditablePhrase($event.inputEvent, $event.indexOfEditablePhrase)"
+      (editablePhraseChanged)="updatedEditablePhrase$.next({inputEvent: $event.inputEvent, editablePhraseIndex: $event.indexOfEditablePhrase})"
     ></app-workspace>
 
     <app-footer

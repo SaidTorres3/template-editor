@@ -8,6 +8,12 @@ import {
 import exampleObject from "./exampleObject.json";
 import { transformEditablePhrasesToViewablePhrases } from "src/utils/phrasesParsers/transformEditablePhrasesToViewablePhrases";
 import { Zoom } from "./shared/zoom-class/Zoom";
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  Subscription,
+} from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -24,6 +30,11 @@ export class AppComponent {
   public viewablePhrases: ViewablePhrase[] = [];
   public history: History[] = [];
   public zoom: Zoom = new Zoom();
+  public updatedEditablePhrase$ = new BehaviorSubject<
+    UpdatedEditablePhraseInformation
+  >(undefined);
+  private updatedEditablePhrase$$1: Subscription;
+  private updatedEditablePhrase$$2: Subscription;
 
   public workspace: WorkSpace = {
     dropingFile: false,
@@ -45,6 +56,36 @@ export class AppComponent {
 
   ngOnInit() {
     this.objectData = exampleObject;
+    let lastValue: UpdatedEditablePhraseInformation | undefined;
+    this.updatedEditablePhrase$$1 = this.updatedEditablePhrase$
+      .pipe(debounceTime(250))
+      .subscribe((updatedEditablePhraseInformation) => {
+        this.updateEditablePhrase(
+          updatedEditablePhraseInformation.inputEvent,
+          updatedEditablePhraseInformation.editablePhraseIndex
+        );
+      });
+
+    this.updatedEditablePhrase$$2 = this.updatedEditablePhrase$.subscribe(
+      (updatedEditablePhraseInformation) => {
+        if (
+          lastValue &&
+          updatedEditablePhraseInformation.editablePhraseIndex !=
+            lastValue.editablePhraseIndex
+        ) {
+          this.updateEditablePhrase(
+            lastValue.inputEvent,
+            lastValue.editablePhraseIndex
+          );
+        }
+        lastValue = updatedEditablePhraseInformation;
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.updatedEditablePhrase$$1.unsubscribe();
+    this.updatedEditablePhrase$$2.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -119,7 +160,6 @@ export class AppComponent {
       lastSelection: selectionRange,
       historyIndex: this.history.length - 1,
     };
-    console.log(selection);
     this.updateViewablePhrasesValue();
   }
 
@@ -246,63 +286,45 @@ export class AppComponent {
 
   public undo = () => {
     if (this.workspace.historyIndex > 0) {
-      const editablePhrasesFromLastestElementInHistory = this.history[
+      const lastestEditablePhrasesInHistory = this.history[
         this.workspace.historyIndex
       ].editablePhrases.map((a) => ({ ...a }));
       this.workspace.historyIndex--;
-      this.workspace = {
-        ...this.workspace,
-        lastModifiedEditablePhraseIndex: this.history[
-          this.workspace.historyIndex
-        ].lastModifiedEditablePhraseIndex,
-        lastSelection: this.history[this.workspace.historyIndex].selection,
-      };
-      editablePhrasesFromLastestElementInHistory.map(
-        (editablePhrase, index) => {
-          const editablePhraseFromHistory = this.history[
-            this.workspace.historyIndex
-          ].editablePhrases[index];
-          if (editablePhrase.value !== editablePhraseFromHistory.value) {
-            this.editablePhrases[index] = {
-              ...this.history[this.workspace.historyIndex].editablePhrases[
-                index
-              ],
-            };
-          }
-        }
-      );
-      this.updateViewablePhrasesValue();
+      this.modifyEditablePhrases(lastestEditablePhrasesInHistory);
     }
   };
 
   public redo = () => {
     if (this.workspace.historyIndex + 1 <= this.history.length - 1) {
-      const editablePhrasesFromLastestElementInHistory = this.history[
+      const lastestEditablePhrasesInHistory = this.history[
         this.workspace.historyIndex
-      ].editablePhrases.map((a) => ({
-        ...a,
-      }));
+      ].editablePhrases.map((a) => ({ ...a }));
       this.workspace.historyIndex++;
-      this.workspace = {
-        ...this.workspace,
-        lastModifiedEditablePhraseIndex: this.history[
-          this.workspace.historyIndex
-        ].lastModifiedEditablePhraseIndex,
-        lastSelection: this.history[this.workspace.historyIndex].selection,
-      };
-      editablePhrasesFromLastestElementInHistory.map(
-        (editablePhrase, index) => {
-          const editablePhraseFromHistory = this.history[
-            this.workspace.historyIndex
-          ].editablePhrases[index];
-          if (editablePhrase.value !== editablePhraseFromHistory.value) {
-            this.editablePhrases[index] = { ...editablePhraseFromHistory };
-          }
-        }
-      );
-      this.updateViewablePhrasesValue();
+      this.modifyEditablePhrases(lastestEditablePhrasesInHistory);
     }
   };
+
+  private modifyEditablePhrases(
+    lastestEditablePhraseInHistoryBeforeChange: EditablePhrase[]
+  ) {
+    const ñ = this.history[this.workspace.historyIndex];
+    this.workspace = {
+      ...this.workspace,
+      lastModifiedEditablePhraseIndex: ñ.lastModifiedEditablePhraseIndex,
+      lastSelection: ñ.selection,
+    };
+    lastestEditablePhraseInHistoryBeforeChange.map(
+      (selectedEditablePhrase, index) => {
+        const previousSelectedEditablePhrase = ñ.editablePhrases[index];
+        if (
+          selectedEditablePhrase.value !== previousSelectedEditablePhrase.value
+        ) {
+          this.editablePhrases[index] = { ...previousSelectedEditablePhrase };
+        }
+      }
+    );
+    this.updateViewablePhrasesValue();
+  }
 
   private historyHandlerListener() {
     // add event listener to ctrl + z and ctrl + y
@@ -354,4 +376,9 @@ export interface History {
   editablePhrases: EditablePhrase[];
   lastModifiedEditablePhraseIndex: number;
   selection: SelectionRange;
+}
+
+interface UpdatedEditablePhraseInformation {
+  inputEvent: InputEvent;
+  editablePhraseIndex: number;
 }
