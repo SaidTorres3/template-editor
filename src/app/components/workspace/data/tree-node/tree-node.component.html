@@ -17,9 +17,10 @@
       class="data-node"
       [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : 'not-primitive-value'"
       [class.founded]="isFoundedItem(item.value.title, showPath(item))"
+      [focus]="isFoundedItem(item.value.title, showPath(item))"
       contenteditable="false"
       >{{ showRealValue && i==actualIndex && (item.value.type |
-      doesStringRepresentPrimitive) && isHovering? showPath(item) :
+      doesStringRepresentPrimitive) && isHovering ? showPath(item) :
       (item.value.title) }}</div
     >
     <ng-container *ngIf="item.value | isObject">
@@ -27,7 +28,7 @@
         [node]="item.value"
         [tabulation]="((item.value | hasTheseProps:'title':'type') ? tabulationLenght : 0)"
         [path]="pathToSend(item)"
-        [search]="search"
+        [workspace]="workspace"
       ></tree-node>
     </ng-container>
   </div>

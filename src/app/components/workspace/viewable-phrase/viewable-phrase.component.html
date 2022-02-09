@@ -1,6 +1,6 @@
 <ng-container *ngIf="viewablePhrases">
   <ng-container *ngFor="let viewablePhrase of viewablePhrases; let i = index">
-    <p
+    <div
       [class.viewable-phrase--typed]="viewablePhrase.type !== 'text'"
       [class.viewable-phrase--if]="viewablePhrase.type === 'if'"
       [class.viewable-phrase--handlebar]="viewablePhrase.type === 'handlebar'"
@@ -9,8 +9,24 @@
       type="text"
       spellcheck="true"
       (click)="viewablePhrase.type !== 'text' ? showModalToggle($event,i) : undefined"
-      >{{viewablePhrase.value}}</p
     >
+      <span *ngIf="viewablePhrase.type === 'text'"
+        >{{viewablePhrase.value}}</span
+      >
+      <ng-container *ngIf="viewablePhrase.type !== 'text'">
+        <ng-container
+          *ngFor="let variableChecker of viewablePhrase.value|variableExist:data"
+        >
+          <variable-checker
+            [input]="variableChecker"
+            (clickExistingVariable)="setSearchData($event)"
+            (clickNonExistingVariable)="stopClickPropagation($event)"
+            hightlightExistingVariables="true"
+          ></variable-checker>
+        </ng-container>
+      </ng-container>
+    </div>
+
     <div
       class="window-modal"
       [style]="'left: '+showModal.modalPostion.x+-5+'px; top: '+showModal.modalPostion.y+-100+'px;'"
@@ -23,8 +39,23 @@
         [class.readable-intruction--if]="readableInstruction.handlebarType === 'if'"
         [class.readable-intruction--each]="readableInstruction.handlebarType === 'each'"
         [class.readable-intruction--variable]="readableInstruction.handlebarType === 'variable'"
-        >{{readableInstruction.value}}</div
       >
+        <!-- {{readableInstruction.value}} -->
+        <span *ngIf="readableInstruction.type === 'text'"
+          >{{readableInstruction.value}}</span
+        >
+        <ng-container *ngIf="readableInstruction.type !== 'text'">
+          <ng-container
+            *ngFor="let variableChecker of readableInstruction.value|variableExist:data"
+          >
+            <variable-checker
+              [input]="variableChecker"
+              (clickExistingVariable)="setSearchData($event)"
+              hightlightExistingVariables="true"
+            ></variable-checker>
+          </ng-container>
+        </ng-container>
+      </div>
     </div>
   </ng-container>
 </ng-container>

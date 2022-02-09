@@ -15,6 +15,9 @@ import { HeaderComponent } from './components/header/header.component';
 import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { SelectionRangeDirective } from './directives/selection-range.directive';
+import { CheckVariableExistenceDirective } from './directives/check-variable-existence.directive';
+import { VariableExistPipe } from './pipes/variable-exist.pipe';
+import { VariableCheckerComponent } from './components/workspace/viewable-phrase/variable-checker/variable-checker.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import { SelectionRangeDirective } from './directives/selection-range.directive'
     HeaderComponent,
     WorkspaceComponent,
     FooterComponent,
-    SelectionRangeDirective
+    SelectionRangeDirective,
+    CheckVariableExistenceDirective,
+    VariableExistPipe,
+    VariableCheckerComponent
   ],
   imports: [
     BrowserModule

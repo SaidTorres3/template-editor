@@ -8,7 +8,9 @@ export class FocusDirective {
   constructor(@Inject(ElementRef) private element: ElementRef) { }
   protected ngOnChanges() {
     if (this.focus) {
-      this.element.nativeElement.focus();
+      const element = this.element.nativeElement as HTMLElement
+      element.focus();
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }

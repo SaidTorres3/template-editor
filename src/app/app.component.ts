@@ -119,7 +119,6 @@ export class AppComponent {
       lastSelection: selectionRange,
       historyIndex: this.history.length - 1,
     };
-    console.log(selection);
     this.updateViewablePhrasesValue();
   }
 

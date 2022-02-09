@@ -1,0 +1,13 @@
+<span *ngIf="!input.isVariable">{{input.value}}</span>
+<span
+  *ngIf="input.isVariable && input.exist"
+  (click)="onClickExistingVariable($event)"
+  [class]="hightlightExistingVariables ? 'variable-checker__isVariableAndExist' : undefined"
+  >{{input.value}}</span
+>
+<span
+  *ngIf="input.isVariable && !input.exist"
+  (click)="onClickNonExistingVariable($event)"
+  class="variable-checker__isVariableAndNotExist"
+  >{{input.value}}</span
+>
