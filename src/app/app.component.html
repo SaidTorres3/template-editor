@@ -11,6 +11,16 @@
       accept=".docx"
     />
 
+    <div
+      class="backdrop"
+      [class.backdrop--hover]="workspace.dropingFile"
+      (wheel)="$event.preventDefault()"
+    >
+      <div class="backdrop__drop-file-msg">
+        Abrir template
+      </div>
+    </div>
+
     <app-header
       [workspace]="workspace"
       [docxFile]="docxFile"

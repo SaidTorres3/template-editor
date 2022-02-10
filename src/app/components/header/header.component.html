@@ -1,9 +1,3 @@
-<div *ngIf="workspace.dropingFile" class="backdrop" (wheel)="$event.preventDefault()">
-  <div class="backdrop__drop-file-msg">
-    Abrir template
-  </div>
-</div>
-
 <div class="header">
   <input
     #uploadFileInput
@@ -29,11 +23,17 @@
     >
       Guardar a computadora
     </p>
-    <p class="header__element__dropdown__item" (click)="uploadFileInput.click()">
+    <p
+      class="header__element__dropdown__item"
+      (click)="uploadFileInput.click()"
+    >
       Abrir template
     </p>
   </div>
-  <div class="header__element header__element--file" (click)="fileDropDownToggle()">
+  <div
+    class="header__element header__element--file"
+    (click)="fileDropDownToggle()"
+  >
     <label>Archivo</label>
   </div>
   <div class="header__element header__element--title">
@@ -41,6 +41,7 @@
   </div>
   <div class="header__element" *ngIf="docxFile.lastModifiedDate">
     <!-- date with hour -->
-    Última modificación: {{docxFile.lastModifiedDate | date: 'dd/MM/yyyy HH:mm'}}
+    Última modificación: {{docxFile.lastModifiedDate | date: 'dd/MM/yyyy
+    HH:mm'}}
   </div>
 </div>
