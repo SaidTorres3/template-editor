@@ -122,14 +122,6 @@ export class AppComponent {
     this.updateViewablePhrasesValue();
   }
 
-  public pasteContentWithoutStylesAndEnters(e: ClipboardEvent) {
-    //delete this
-    e.preventDefault();
-    let text = e.clipboardData.getData("text/plain");
-    text = text.replace(/\n/g, " ");
-    // todo
-    document.execCommand("insertText", false, text);
-  }
 
   public fileBackdropHandlerListener = () => {
     const initCount = -1;

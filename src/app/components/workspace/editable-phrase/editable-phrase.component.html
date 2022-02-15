@@ -7,7 +7,7 @@
     class="editable-phrase"
     contentEditable="true"
     (input)="onEdtitablePhraseChanged($event, index)"
-    (paste)="pasteContentWithoutStylesAndEnters($event)"
+    (paste)="pasteContentWithoutStylesAndEnters($event, index)"
     (dragover)="$event.preventDefault()"
     [selectionRange]="workspace.lastModifiedEditablePhraseIndex === index ? workspace.lastSelection : undefined"
     [class.workspace__template__paper-container__paper__phrase--selected]="workspace.lastModifiedEditablePhraseIndex === index"

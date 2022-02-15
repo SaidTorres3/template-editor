@@ -29,7 +29,6 @@
 
     <div
       class="window-modal"
-      [style]="'left: '+showModal.modalPostion.x+-5+'px; top: '+showModal.modalPostion.y+-100+'px;'"
       *ngIf="showModal.showModal && showModal.phraseIndex === i"
     >
       <div
@@ -40,6 +39,7 @@
         [class.readable-intruction--each]="readableInstruction.handlebarType === 'each'"
         [class.readable-intruction--variable]="readableInstruction.handlebarType === 'variable'"
       >
+        <div class="window-modal__notch"></div>
         <!-- {{readableInstruction.value}} -->
         <span *ngIf="readableInstruction.type === 'text'"
           >{{readableInstruction.value}}</span
