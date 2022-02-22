@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, AfterViewInit } from "@angular/core";
 import { ViewablePhrase } from "src/utils/docxParsers/types";
 import { handlebarToInstruction } from "src/utils/handlebarTranslators/handlebarToReadableInstruction";
 import { ReadableInstruction } from "src/utils/handlebarTranslators/types";
@@ -10,23 +10,35 @@ import { WorkSpace } from "src/app/app.component";
   templateUrl: "./viewable-phrase.component.html",
   styleUrls: ["./viewable-phrase.component.less"],
 })
-export class ViewablePhraseComponent {
+export class ViewablePhraseComponent implements AfterViewInit {
   @Input() viewablePhrases: ViewablePhrase[];
   @Input() data: any;
-  @Input() workspace: WorkSpace
+  @Input() workspace: WorkSpace;
 
   public showModal: ShowModal = {
     phraseIndex: 0,
     showModal: false,
-    modalPostion: { x: 0, y: 0 },
+    modalPosition: { x: 0, y: 0 },
+    arrowPosition: { x: 0 },
     data: undefined,
   };
 
+  ngAfterViewInit(): void {
+    this.createClickoffListener()
+  }
+
+  private createClickoffListener = () => {
+    window.addEventListener('click', () => {
+      this.showModal.showModal = false;
+    })
+  }
+
   public showModalToggle(e: MouseEvent, phraseIndex: number): void {
+    e.stopPropagation();
     this.showModal.phraseIndex = phraseIndex;
     this.showModal.showModal = !this.showModal.showModal;
-    this.showModal.modalPostion.x = e.clientX;
-    this.showModal.modalPostion.y = e.clientY;
+    this.showModal.modalPosition.x = e.clientX;
+    this.showModal.modalPosition.y = e.clientY - window.scrollY;
     this.translateHandlebarToInstructions(phraseIndex);
   }
 
@@ -56,19 +68,21 @@ export class ViewablePhraseComponent {
 
   public setSearchData(e: MouseEvent) {
     // get text from the clicked element
-    e.stopImmediatePropagation()
+    e.stopImmediatePropagation();
     const element = e.target as HTMLElement;
     this.workspace.searchData = element.innerHTML;
   }
 
   public stopClickPropagation(e: MouseEvent) {
-    e.stopImmediatePropagation()
+    e.stopImmediatePropagation();
+    e.stopPropagation();
   }
 }
 
 interface ShowModal {
   showModal: boolean;
   phraseIndex: number;
-  modalPostion: { x: number; y: number };
+  modalPosition: { x: number; y: number };
+  arrowPosition: { x: number };
   data: ReadableInstruction[] | undefined;
 }
