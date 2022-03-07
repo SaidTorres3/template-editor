@@ -15,7 +15,7 @@
       *ngIf="item.value.title"
       (click)="replaceSelectionWithInnertext($event, item.value.type)"
       class="data-node"
-      [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : 'not-primitive-value'"
+      [class]="(item.value.type | doesStringRepresentPrimitive) ? 'primitive-value' : item.value.type === 'array' ? 'array-value' : 'not-primitive-value'"
       [class.founded]="isFoundedItem(item.value.title, showPath(item))"
       [focus]="isFoundedItem(item.value.title, showPath(item))"
       contenteditable="false"

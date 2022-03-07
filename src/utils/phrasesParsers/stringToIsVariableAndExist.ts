@@ -6,7 +6,7 @@ export const stringToIsVariableAndExist = (
 ): isVariableAndExist[] => {
   const result: isVariableAndExist[] = [];
   // const isVariableRegex = /([^({\s]+\.[^})\s]+)/g;
-  const isVariableRegex = /([^({}\s]+[A-Za-z]\.[^{})\s]+)/g;
+  const isVariableRegex = /([^({}\s]+\w\.[^{})\s]+)/g;
   // separe the matches and non matches into an array of objects:
   text.split(isVariableRegex).forEach((part) => {
     const isThereAMatchWithRegex = part.match(isVariableRegex)?.length;

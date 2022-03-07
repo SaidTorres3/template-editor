@@ -98,35 +98,31 @@ export class TreeNodeComponent {
     const dividedText = text.replace(/[\{\}]/g, "").split(".");
     console.log(dividedText);
     let posibleResult = "";
-    let previousIterationWasAnUniversalQuantizer = false;
     for (let [index, sentence] of dividedText.entries()) {
-      const regexToFindLastContentVariable = /}}([\w\.]+){{\/each}}/g;
+      const regexToFindLastContentVariable = /}}{{([\w\.]+)}}{{\/each}}/g;
       const match = regexToFindLastContentVariable.exec(posibleResult);
-      const part1 = dividedText[index - 1];
-      const part2 = dividedText[index + 1];
+      const arrayName = dividedText[index - 1];
+      const arrayProp = dividedText[index + 1];
       if (
         sentence.includes("∀") &&
         !dividedText[index - 1]?.includes("∀") &&
         !dividedText[index + 1]?.includes("∀")
       ) {
         if (!posibleResult) {
-          posibleResult = `{{#each ${part1}}}${part2}{{/each}}`;
+          posibleResult = `{{#each ${arrayName}}}{{${arrayProp}}}{{/each}}`;
         } else {
           // replace text of the first group
           posibleResult = posibleResult.replace(
             match[1],
-            `{{#each ${part1}}}${part2}{{/each}}`
+            `#each ${arrayName}}}{{${arrayProp}}}{{/each`
           );
-          previousIterationWasAnUniversalQuantizer = true;
         }
-      } else if (match) {
+      } else if (match && !dividedText[index - 1]?.includes("∀")) {
+        console.log(match[1])
         posibleResult = posibleResult.replace(
           match[1],
-          `${
-            previousIterationWasAnUniversalQuantizer ? "" : match[1] + "."
-          }${sentence}`
+          `${match[1]}.${sentence}`
         );
-        previousIterationWasAnUniversalQuantizer = false;
       }
     }
     if (posibleResult) return posibleResult;

@@ -117,7 +117,7 @@
                 "type": "string",
                 "format": "date"
               },
-              "key1": {
+              "lugar": {
                 "title": "Lugar",
                 "type": "object",
                 "properties": {

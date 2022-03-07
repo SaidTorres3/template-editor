@@ -13,6 +13,12 @@
   cursor         : pointer;
 }
 
+.array-value {
+  content    : '⬤ ';
+  color      : #8400ff;
+  white-space: pre;
+}
+
 .not-draggable {
   user-select: none;
 }
@@ -20,6 +26,12 @@
 .not-primitive-value::before {
   content: '⬪ ';
   color  : #cf8787;
+  white-space: pre;
+}
+
+.array-value::before {
+  content    : '[] ';
+  color      : #ca6161;
   white-space: pre;
 }
 
