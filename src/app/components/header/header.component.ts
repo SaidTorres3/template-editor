@@ -25,6 +25,10 @@ export class HeaderComponent {
     if (!this.docxFile.content) {
       return;
     }
+    // update the last modified date 
+    console.log(
+      this.docxFile.content
+    )
     editableObjectToDocx({
       modifiedObjects: this.history[this.workspace.historyIndex].editablePhrases,
       fileIn: this.docxFile.content,

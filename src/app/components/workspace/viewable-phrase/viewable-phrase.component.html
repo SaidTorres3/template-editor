@@ -25,11 +25,14 @@
             hightlightExistingVariables="true"
           ></variable-checker>
         </ng-container>
+
+        <!-- translated-instruction-modal -->
         <div
           #popup
           class="window-modal"
           *ngIf="showModal.showModal && showModal.phraseIndex === i"
-          >
+          (click)="stopClickPropagation($event)"
+        >
           <div class="window-modal__notch">
             <div class="window-modal__notch__triangle"></div>
           </div>
@@ -49,6 +52,7 @@
               <ng-container
                 *ngFor="let variableChecker of readableInstruction.value|variableExist:data"
               >
+                <!-- this clasificates the variable checker into if, each, or variable. In other words, colors the sentenses. -->
                 <variable-checker
                   [input]="variableChecker"
                   (clickExistingVariable)="setSearchData($event)"
