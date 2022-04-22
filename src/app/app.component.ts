@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, ViewChild } from "@angular/core";
 import { docxToEditableObjects } from "src/utils/docxParsers/docxToEditableObjects";
 import {
   InputFileFormat,
@@ -18,8 +18,9 @@ export class AppComponent {
   title = "template-editor";
   @ViewChild("uploadFileInput") uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild("templateContainer") templateContainer: ElementRef<HTMLDivElement>;
+  
+  @Input() objectData: any;
 
-  public objectData: any;
   public editablePhrases: EditablePhrase[] = [];
   public viewablePhrases: ViewablePhrase[] = [];
   public history: History[] = [];
