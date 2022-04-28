@@ -1,4 +1,3 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { isObject } from './pipes/isObject.pipe';
@@ -18,6 +17,7 @@ import { SelectionRangeDirective } from './directives/selection-range.directive'
 import { CheckVariableExistenceDirective } from './directives/check-variable-existence.directive';
 import { VariableExistPipe } from './pipes/variable-exist.pipe';
 import { VariableCheckerComponent } from './components/workspace/viewable-phrase/variable-checker/variable-checker.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -41,7 +41,7 @@ import { VariableCheckerComponent } from './components/workspace/viewable-phrase
     VariableCheckerComponent
   ],
   imports: [
-    BrowserModule
+    CommonModule
   ],
   providers: [],
   exports: [

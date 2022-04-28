@@ -17,9 +17,9 @@ import * as i15 from "./directives/selection-range.directive";
 import * as i16 from "./directives/check-variable-existence.directive";
 import * as i17 from "./pipes/variable-exist.pipe";
 import * as i18 from "./components/workspace/viewable-phrase/variable-checker/variable-checker.component";
-import * as i19 from "@angular/platform-browser";
+import * as i19 from "@angular/common";
 export declare class AppModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<AppModule, never>;
-    static ɵmod: i0.ɵɵNgModuleDeclaration<AppModule, [typeof i1.AppComponent, typeof i2.isObject, typeof i3.TreeNodeComponent, typeof i4.HasThesePropsPipe, typeof i5.DoesStringRepresentPrimitivePipe, typeof i6.EntersToBrPipe, typeof i7.ViewablePhraseComponent, typeof i8.IsArrayPipe, typeof i9.FocusDirective, typeof i10.EditablePhraseComponent, typeof i11.DataComponent, typeof i12.HeaderComponent, typeof i13.WorkspaceComponent, typeof i14.FooterComponent, typeof i15.SelectionRangeDirective, typeof i16.CheckVariableExistenceDirective, typeof i17.VariableExistPipe, typeof i18.VariableCheckerComponent], [typeof i19.BrowserModule], [typeof i1.AppComponent]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<AppModule, [typeof i1.AppComponent, typeof i2.isObject, typeof i3.TreeNodeComponent, typeof i4.HasThesePropsPipe, typeof i5.DoesStringRepresentPrimitivePipe, typeof i6.EntersToBrPipe, typeof i7.ViewablePhraseComponent, typeof i8.IsArrayPipe, typeof i9.FocusDirective, typeof i10.EditablePhraseComponent, typeof i11.DataComponent, typeof i12.HeaderComponent, typeof i13.WorkspaceComponent, typeof i14.FooterComponent, typeof i15.SelectionRangeDirective, typeof i16.CheckVariableExistenceDirective, typeof i17.VariableExistPipe, typeof i18.VariableCheckerComponent], [typeof i19.CommonModule], [typeof i1.AppComponent]>;
     static ɵinj: i0.ɵɵInjectorDeclaration<AppModule>;
 }
