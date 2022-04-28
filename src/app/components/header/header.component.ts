@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DocxFile, History, WorkSpace } from "src/app/app.component";
-import { docxToString } from "src/utils/docxParsers/docxToString";
-import { editableObjectToDocx } from "src/utils/docxParsers/editableObjectsToDocx";
-import { EditablePhrase } from "src/utils/docxParsers/types";
+import { DocxFile, History, WorkSpace } from "../../../app/interfaces";
+import { docxToString } from "../../../utils/docxParsers/docxToString";
+import { editableObjectToDocx } from "../../../utils/docxParsers/editableObjectsToDocx";
+import { EditablePhrase } from "../../../utils/docxParsers/types";
 
 @Component({
   selector: "app-header[history][docxFile][uploadFileInput][editablePhrases]",
@@ -17,7 +17,8 @@ export class HeaderComponent {
   @Input() editablePhrases: EditablePhrase[];
   @Output() fileChange: EventEmitter<InputEvent> = new EventEmitter<InputEvent>();
 
-  onFileChangeHandler(event: InputEvent) {
+  onFileChangeHandler(e: Event) {
+    const event = e as InputEvent;
     this.fileChange.emit(event);
   }
 

@@ -1,13 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { stringToIsVariableAndExist } from 'src/utils/phrasesParsers/stringToIsVariableAndExist';
-import { isVariableAndExist } from 'src/utils/phrasesParsers/types';
+import { stringToIsVariableAndExist } from '../../utils/phrasesParsers/stringToIsVariableAndExist';
+import { isVariableAndExist } from '../../utils/phrasesParsers/types';
 
 @Pipe({
   name: 'variableExist'
 })
 export class VariableExistPipe implements PipeTransform {
 
-  transform(text: string, object: any): isVariableAndExist[] {
+  // text was typed as string, but packagr compiler can't understand it
+  transform(text: any, object: any): isVariableAndExist[] {
     return stringToIsVariableAndExist(text, object);
   }
 

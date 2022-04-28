@@ -55,7 +55,7 @@ const filterValue = (value: string): string => {
 
 const cleanInsideValue = (insideValue: string) => {
   insideValue = insideValue.replace('@index', 'el numero del elemento que se está operando')
-  insideValue = insideValue.replace('@last', 'el último elemento que se está operando')
+  insideValue = insideValue.replace('@last', 'es el último elemento de la lista y')
   insideValue = insideValue.replace(/[()]/g, '')
   insideValue = insideValue.replace('not ', '')
   return insideValue

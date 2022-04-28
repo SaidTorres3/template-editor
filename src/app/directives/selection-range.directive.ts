@@ -5,10 +5,9 @@ import {
   Inject,
   Input,
   OnChanges,
-  OnInit,
 } from "@angular/core";
-import { setCaretPosition } from "src/utils/javascript/setCaretPosition";
-import { SelectionRange } from "../app.component";
+import { setCaretPosition } from "../../utils/javascript/setCaretPosition";
+import { SelectionRange } from "../interfaces";
 
 @Directive({
   selector: "[selectionRange]",

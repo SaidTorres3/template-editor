@@ -1,6 +1,7 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
-import { WorkSpace } from "src/app/app.component";
-import { DoesStringRepresentPrimitivePipe } from "src/app/pipes/does-string-represent-primitive.pipe";
+import { Component, ElementRef, Input, ViewChild } from "@angular/core";
+import { Paradox } from "../../../../../app/pipes/isObject.pipe";
+import { WorkSpace } from "../../../../../app/interfaces";
+import { DoesStringRepresentPrimitivePipe } from "../../../../../app/pipes/does-string-represent-primitive.pipe";
 
 @Component({
   selector: "tree-node[workspace]",
@@ -12,7 +13,8 @@ import { DoesStringRepresentPrimitivePipe } from "src/app/pipes/does-string-repr
 })
 export class TreeNodeComponent {
   @ViewChild("treeRoot") treeRoot: ElementRef<HTMLDivElement>;
-  @Input() node: any;
+  @Input() node: Paradox;
+  // @Input() node:  any;
   @Input() tabulation: number;
   @Input() path: string = "";
   @Input() workspace: WorkSpace;
@@ -31,6 +33,7 @@ export class TreeNodeComponent {
     this.isHovering = isHovering;
   }
 
+  // public showPath(item: Paradox): string {
   public showPath(item: any): string {
     return `{{${this.path + item.key}}}`;
   }
@@ -118,7 +121,7 @@ export class TreeNodeComponent {
           );
         }
       } else if (match && !dividedText[index - 1]?.includes("∀")) {
-        console.log(match[1])
+        console.log(match[1]);
         posibleResult = posibleResult.replace(
           match[1],
           `${match[1]}.${sentence}`

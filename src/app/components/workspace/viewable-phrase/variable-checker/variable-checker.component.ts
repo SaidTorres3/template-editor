@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { isVariableAndExist } from "src/utils/phrasesParsers/types";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { isVariableAndExist } from "../../../../../utils/phrasesParsers/types";
 
 @Component({
   selector: "variable-checker[input]",

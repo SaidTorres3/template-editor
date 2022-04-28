@@ -44,6 +44,9 @@ import { VariableCheckerComponent } from './components/workspace/viewable-phrase
     BrowserModule
   ],
   providers: [],
+  exports: [
+    AppComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

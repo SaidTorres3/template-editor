@@ -1,12 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { WorkSpace } from "src/app/app.component";
-import { Zoom } from "src/app/shared/zoom-class/Zoom";
-import { EditablePhrase, ViewablePhrase } from "src/utils/docxParsers/types";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { WorkSpace } from "../../../app/interfaces";
+import { Zoom } from "../../../app/shared/zoom-class/Zoom";
+import {
+  EditablePhrase,
+  ViewablePhrase,
+} from "../../../utils/docxParsers/types";
 
 @Component({
-  selector: "app-workspace[objectData][workspace][editablePhrases][fileInput][viewablePhrases]",
+  selector:
+    "app-workspace[objectData][workspace][editablePhrases][fileInput][viewablePhrases]",
   templateUrl: "./workspace.component.html",
-  styleUrls: ["./workspace.component.less", "../../shared/styles/commonStyles.less"],
+  styleUrls: [
+    "./workspace.component.less",
+    "../../shared/styles/commonStyles.less",
+  ],
 })
 export class WorkspaceComponent {
   @Input() objectData: any;
@@ -21,8 +28,12 @@ export class WorkspaceComponent {
 
   public zoom: Zoom = new Zoom();
 
-  public onEditablePhraseChanged(e: InputEvent, index: number) {
-    this.editablePhraseChanged.emit({ inputEvent: e, indexOfEditablePhrase: index });
+  public onEditablePhraseChanged(e: Event, index: number) {
+    const inputEvent = e as InputEvent;
+    this.editablePhraseChanged.emit({
+      inputEvent,
+      indexOfEditablePhrase: index,
+    });
   }
 
   public disableEnter(e: KeyboardEvent) {

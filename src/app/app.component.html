@@ -3,13 +3,13 @@
   <body>
     <input
       #uploadFileInput
-      (change)="setTemplateFromFile($event.srcElement.files[0])"
+      (change)="setTemplateFromInputEvent($event)"
       class="invisible"
       type="file"
       id="template"
       name="template"
       accept=".docx"
-    />
+      />
 
     <div
       class="backdrop"
@@ -27,7 +27,7 @@
       [history]="history"
       [editablePhrases]="editablePhrases"
       [uploadFileInput]="uploadFileInput"
-      (fileChange)="setTemplateFromFile($event.srcElement.files[0])"
+      (fileChange)="setTemplateFromInputEvent($event)"
     ></app-header>
 
     <app-workspace

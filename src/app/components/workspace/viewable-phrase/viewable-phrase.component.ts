@@ -1,9 +1,9 @@
 import { Component, Input, AfterViewInit } from "@angular/core";
-import { ViewablePhrase } from "src/utils/docxParsers/types";
-import { handlebarToInstruction } from "src/utils/handlebarTranslators/handlebarToReadableInstruction";
-import { ReadableInstruction } from "src/utils/handlebarTranslators/types";
-import { clasificateStringBetweenTextAndHandlebars } from "src/utils/handlebarTranslators/clasificateStringBetweenTextAndHandlebars";
-import { WorkSpace } from "src/app/app.component";
+import { ViewablePhrase } from "../../../../utils/docxParsers/types";
+import { handlebarToInstruction } from "../../../../utils/handlebarTranslators/handlebarToReadableInstruction";
+import { ReadableInstruction } from "../../../../utils/handlebarTranslators/types";
+import { clasificateStringBetweenTextAndHandlebars } from "../../../../utils/handlebarTranslators/clasificateStringBetweenTextAndHandlebars";
+import { WorkSpace } from "../../../../app/interfaces";
 
 @Component({
   selector: "viewable-phrases[viewablePhrases][data][workspace]",
@@ -24,14 +24,14 @@ export class ViewablePhraseComponent implements AfterViewInit {
   };
 
   ngAfterViewInit(): void {
-    this.createClickoffListener()
+    this.createClickoffListener();
   }
 
   private createClickoffListener = () => {
-    window.addEventListener('click', () => {
+    window.addEventListener("click", () => {
       this.showModal.showModal = false;
-    })
-  }
+    });
+  };
 
   public showModalToggle(e: MouseEvent, phraseIndex: number): void {
     e.stopPropagation();

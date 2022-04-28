@@ -1,4 +1,4 @@
-import JSZip from 'jszip'
+import * as JSZip from 'jszip'
 import { parseString } from 'xml2js-preserve-spaces'
 import { InputFileFormat, EditablePhrase } from './types';
 

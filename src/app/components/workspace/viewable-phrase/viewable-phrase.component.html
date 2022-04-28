@@ -1,4 +1,4 @@
-<ng-container *ngIf="viewablePhrases">
+<ng-container *ngIf="viewablePhrases"> 
   <ng-container *ngFor="let viewablePhrase of viewablePhrases; let i = index">
     <div
       [class.viewable-phrase--typed]="viewablePhrase.type !== 'text'"
@@ -17,12 +17,14 @@
       <ng-container *ngIf="viewablePhrase.type !== 'text'">
         <ng-container
           *ngFor="let variableChecker of viewablePhrase.value|variableExist:data"
+          comment="I have to force the variable viewablePhrase to be string"
         >
           <variable-checker
             [input]="variableChecker"
             (clickExistingVariable)="setSearchData($event)"
             (clickNonExistingVariable)="stopClickPropagation($event)"
-            hightlightExistingVariables="true"
+            [hightlightExistingVariables]="true"
+            comment="check later"
           ></variable-checker>
         </ng-container>
 
@@ -56,7 +58,7 @@
                 <variable-checker
                   [input]="variableChecker"
                   (clickExistingVariable)="setSearchData($event)"
-                  hightlightExistingVariables="true"
+                  [hightlightExistingVariables]="true"
                 ></variable-checker>
               </ng-container>
             </ng-container>

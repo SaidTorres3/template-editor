@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { WorkSpace } from 'src/app/app.component';
-import { Zoom } from 'src/app/shared/zoom-class/Zoom';
+import { WorkSpace } from '../../../app/interfaces';
+import { Zoom } from '../../../app/shared/zoom-class/Zoom';
 
 @Component({
   selector: 'app-footer[workspace]',

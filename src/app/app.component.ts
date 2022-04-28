@@ -1,12 +1,11 @@
 import { Component, ElementRef, Input, ViewChild } from "@angular/core";
-import { docxToEditableObjects } from "src/utils/docxParsers/docxToEditableObjects";
+import { docxToEditableObjects } from "../utils/docxParsers/docxToEditableObjects";
 import {
-  InputFileFormat,
   EditablePhrase,
   ViewablePhrase,
-} from "src/utils/docxParsers/types";
-import exampleObject from "./exampleObject.json";
-import { transformEditablePhrasesToViewablePhrases } from "src/utils/phrasesParsers/transformEditablePhrasesToViewablePhrases";
+} from "../utils/docxParsers/types";
+import { transformEditablePhrasesToViewablePhrases } from "../utils/phrasesParsers/transformEditablePhrasesToViewablePhrases";
+import { DocxFile, ViewMode, WorkSpace, History, SelectionRange } from "./interfaces";
 import { Zoom } from "./shared/zoom-class/Zoom";
 
 @Component({
@@ -45,7 +44,6 @@ export class AppComponent {
   };
 
   ngOnInit() {
-    this.objectData = exampleObject;
   }
 
   ngAfterViewInit() {
@@ -54,7 +52,12 @@ export class AppComponent {
     this.changeModeWithHotkeysListener();
   }
 
-  public setTemplateFromFile(inputFile: File) {
+  public setTemplateFromInputEvent(inputEvent: Event) {
+    const inputFile = inputEvent.target as HTMLInputElement;
+    this.setTemplateFromFile(inputFile.files[0]);
+  }
+
+  private setTemplateFromFile(inputFile: File) {
     const reader = new FileReader();
     reader.onloadend = (e) => {
       const data = e.target.result;
@@ -310,40 +313,4 @@ export class AppComponent {
       }
     });
   }
-}
-export interface DocxFile {
-  name: string;
-  lastModifiedDate: number;
-  content: InputFileFormat;
-}
-
-export interface WorkSpace {
-  dropingFile: boolean;
-  fileDropDown: boolean;
-  paperZoom: { value: number };
-  dataZoom: { value: number };
-  mode: ViewMode;
-  historyIndex: number;
-  lastModifiedEditablePhraseIndex: number;
-  lastSelection: SelectionRange;
-  searchData?: string;
-  needToFocus: boolean;
-}
-
-export interface SelectionRange {
-  start: number;
-  end: number;
-}
-
-export enum ViewMode {
-  edit = "edit",
-  view = "view",
-  simulation = "simulation",
-  editView = "editView",
-}
-
-export interface History {
-  editablePhrases: EditablePhrase[];
-  lastModifiedEditablePhraseIndex: number;
-  selection: SelectionRange;
 }

@@ -1,4 +1,4 @@
-import JSZip from 'jszip'
+import * as JSZip from 'jszip'
 import xml2js from 'xml2js-preserve-spaces'
 import { EditableObjectToDocxOpts, EditablePhrase, PhraseCoords } from './types';
 

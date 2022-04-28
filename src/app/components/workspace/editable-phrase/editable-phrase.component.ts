@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { WorkSpace } from "src/app/app.component";
-import { EditablePhrase } from "src/utils/docxParsers/types";
-import { addStr } from "src/utils/javascript/addString";
-import { replaceStr } from "src/utils/javascript/replaceString";
-import { setCaretPosition } from "src/utils/javascript/setCaretPosition";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { WorkSpace } from "../../../../app/interfaces";
+import { EditablePhrase } from "../../../../utils/docxParsers/types";
+import { addStr } from "../../../../utils/javascript/addString";
+import { replaceStr } from "../../../../utils/javascript/replaceString";
+import { setCaretPosition } from "../../../../utils/javascript/setCaretPosition";
 
 @Component({
   selector: "editable-phrases[editablePhrases][workspace]",
@@ -16,7 +16,7 @@ export class EditablePhraseComponent {
   @Input() editablePhrases: EditablePhrase[];
   @Input() workspace: WorkSpace;
   @Output() editablePhraseChanged = new EventEmitter<{
-    inputEvent: InputEvent;
+    inputEvent: Event;
     index: number;
   }>();
 
@@ -56,7 +56,7 @@ export class EditablePhraseComponent {
     setCaretPosition(element, caretFirstPosition);
   }
 
-  public onEdtitablePhraseChanged(e: InputEvent, index: number) {
+  public onEdtitablePhraseChanged(e: Event, index: number) {
     this.editablePhraseChanged.emit({ inputEvent: e, index });
   }
 }
