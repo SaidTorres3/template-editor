@@ -1,0 +1,34 @@
+import { ElementRef } from "@angular/core";
+import { EditablePhrase, ViewablePhrase } from "../utils/docxParsers/types";
+import { DocxFile, WorkSpace, History } from "./interfaces";
+import { Zoom } from "./shared/zoom-class/Zoom";
+import * as i0 from "@angular/core";
+export declare class AppComponent {
+    title: string;
+    uploadFileInput: ElementRef<HTMLInputElement>;
+    templateContainer: ElementRef<HTMLDivElement>;
+    objectData: any;
+    editablePhrases: EditablePhrase[];
+    viewablePhrases: ViewablePhrase[];
+    history: History[];
+    zoom: Zoom;
+    workspace: WorkSpace;
+    docxFile: DocxFile;
+    ngOnInit(): void;
+    ngAfterViewInit(): void;
+    setTemplateFromInputEvent(inputEvent: Event): void;
+    private setTemplateFromFile;
+    private setPhrases;
+    updateEditablePhrase(inputEvent: InputEvent, editablePhraseIndex: number): void;
+    fileBackdropHandlerListener: () => void;
+    setMode(mode: string): void;
+    private updatesPhrasesValues;
+    private updateEditablePhrasesValue;
+    private updateViewablePhrasesValue;
+    private changeModeWithHotkeysListener;
+    undo: () => void;
+    redo: () => void;
+    private historyHandlerListener;
+    static ɵfac: i0.ɵɵFactoryDeclaration<AppComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AppComponent, "app-root", never, { "objectData": "objectData"; }, {}, never, never>;
+}

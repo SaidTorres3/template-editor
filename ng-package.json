@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "./dist/template-editor-lib",
+  "dest": "./lib/template-editor-lib",
   "lib": {
     "entryFile": "./public_api.ts"
   }
