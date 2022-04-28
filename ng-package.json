@@ -3,5 +3,13 @@
   "dest": "./lib/template-editor-lib",
   "lib": {
     "entryFile": "./public_api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "timers-browserify",
+    "xml2js",
+    "jszip",
+    "xml2js-preserve-spaces",
+    "stream-browserify",
+    "tslib"
+  ]
 }
