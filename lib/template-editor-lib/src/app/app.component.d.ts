@@ -30,5 +30,5 @@ export declare class AppComponent {
     redo: () => void;
     private historyHandlerListener;
     static ɵfac: i0.ɵɵFactoryDeclaration<AppComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AppComponent, "app-root", never, { "objectData": "objectData"; }, {}, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AppComponent, "template-editor", never, { "objectData": "objectData"; }, {}, never, never>;
 }

@@ -38,7 +38,7 @@ import { CommonModule } from '@angular/common';
     SelectionRangeDirective,
     CheckVariableExistenceDirective,
     VariableExistPipe,
-    VariableCheckerComponent
+    VariableCheckerComponent,
   ],
   imports: [
     CommonModule

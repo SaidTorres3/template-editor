@@ -1,12 +1,13 @@
 {
   "name": "saidtorres3-template-editor",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "private": false,
   "dependencies": {
     "jszip": "^3.7.1",
     "stream-browserify": "^3.0.0",
     "tslib": "^2.3.0",
     "xml2js": "^0.4.23",
+    "timers-browserify": "^2.0.12",
     "xml2js-preserve-spaces": "^0.0.1"
   },
   "peerDependencies": {

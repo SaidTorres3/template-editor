@@ -5,6 +5,7 @@ import { InputFileFormat, EditablePhrase } from './types';
 export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<EditablePhrase[]> => {
   return new Promise((resolve, reject) => {
     // unzip the file
+    console.log(JSZip)
     const zip = new JSZip();
     zip.loadAsync(docxFile).then(function (zip) {
       // get the content of the document.xml file

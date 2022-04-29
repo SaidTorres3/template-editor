@@ -9,7 +9,7 @@ import { DocxFile, ViewMode, WorkSpace, History, SelectionRange } from "./interf
 import { Zoom } from "./shared/zoom-class/Zoom";
 
 @Component({
-  selector: "app-root",
+  selector: "template-editor",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.less", "shared/styles/commonStyles.less"],
 })
