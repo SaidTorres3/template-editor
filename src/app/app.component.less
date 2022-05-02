@@ -2,9 +2,16 @@
 
 body {
   margin                 : 0;
+  position               : relative;
+  display                : flex;
+  flex-direction         : column;
   font-family            : 'Readex Pro', sans-serif;
-  background-color       : #f4f6f7;
+  background-color       : #f4f6f7; // general background color, light gray
   font-weight            : 300;
+  box-sizing             : border-box;
+  position               : relative;
+  height                 : 100%;
+  width                  : 100%;
   --elements-color       : #fff;
   --legalSizeSheet-width : 816px;
   --legalSizeSheet-height: 1344px;
@@ -35,12 +42,12 @@ body {
 }
 
 .backdrop__drop-file-msg {
-  font-size   : 5vw;
-  color       : #fff;
-  font-weight : 300;
-  border-style: dashed;
+  font-size    : 5vw;
+  color        : #fff;
+  font-weight  : 300;
+  border-style : dashed;
   border-radius: 0.8vw;
-  border-color: #fff;
-  border-width: 1vw;
-  padding     : 1.5vw;
+  border-color : #fff;
+  border-width : 1vw;
+  padding      : 1.5vw;
 }

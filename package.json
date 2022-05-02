@@ -1,6 +1,6 @@
 {
   "name": "saidtorres3-template-editor",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "scripts": {
     "ng": "ng",
     "start": "ng serve -o --host 0.0.0.0 --port 4500",

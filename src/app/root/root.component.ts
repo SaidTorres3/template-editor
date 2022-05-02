@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  template: `
-  <template-editor></template-editor>
-  `
+  templateUrl: './root.component.html'
 })
 export class RootComponent implements OnInit {
 
