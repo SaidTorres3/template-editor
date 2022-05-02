@@ -1,8 +1,9 @@
-import * as JSZip from 'jszip'
+import * as JSZipImport from "jszip";
 import xml2js from 'xml2js-preserve-spaces'
 import { EditableObjectToDocxOpts, EditablePhrase, PhraseCoords } from './types';
 
 export const editableObjectToDocx = async (opts: EditableObjectToDocxOpts): Promise<File> => {
+  const JSZip = typeof JSZipImport === "function" ? JSZipImport : JSZipImport["default"];
   return new Promise((resolve, reject) => {
     // unzip the file
     const zipHandler = new JSZip();

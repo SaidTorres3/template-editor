@@ -1,10 +1,11 @@
-import * as JSZip from "jszip";
+import * as JSZipImport from "jszip";
 import { parseString } from "xml2js-preserve-spaces";
 import { InputFileFormat } from "./types";
 
 export const docxToString = async (
   docxFile: InputFileFormat
 ): Promise<string> => {
+  const JSZip = typeof JSZipImport === "function" ? JSZipImport : JSZipImport["default"];
   return new Promise((resolve, reject) => {
     // unzip the file
     const zip = new JSZip();
