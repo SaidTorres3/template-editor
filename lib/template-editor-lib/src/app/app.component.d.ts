@@ -1,5 +1,5 @@
-import { ElementRef } from "@angular/core";
-import { EditablePhrase, ViewablePhrase } from "../utils/docxParsers/types";
+import { ElementRef, EventEmitter } from "@angular/core";
+import { EditablePhrase, InputFileFormat, ViewablePhrase } from "../utils/docxParsers/types";
 import { DocxFile, WorkSpace, History } from "./interfaces";
 import { Zoom } from "./shared/zoom-class/Zoom";
 import * as i0 from "@angular/core";
@@ -7,7 +7,10 @@ export declare class AppComponent {
     title: string;
     uploadFileInput: ElementRef<HTMLInputElement>;
     templateContainer: ElementRef<HTMLDivElement>;
-    objectData: any;
+    data: any;
+    template: InputFileFormat;
+    save: EventEmitter<DocxFile>;
+    saveHandler(docxFile: DocxFile): void;
     editablePhrases: EditablePhrase[];
     viewablePhrases: ViewablePhrase[];
     history: History[];
@@ -30,5 +33,5 @@ export declare class AppComponent {
     redo: () => void;
     private historyHandlerListener;
     static ɵfac: i0.ɵɵFactoryDeclaration<AppComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AppComponent, "template-editor", never, { "objectData": "objectData"; }, {}, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AppComponent, "template-editor", never, { "data": "data"; "template": "template"; }, { "save": "save"; }, never, never>;
 }

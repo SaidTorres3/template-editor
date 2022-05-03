@@ -1,5 +1,5 @@
 <div class="workspace">
-  <workspace-data [data]="objectData" [workspace]="workspace"></workspace-data>
+  <workspace-data [data]="data" [workspace]="workspace"></workspace-data>
   <div
     #templateContainer
     class="workspace__template"
@@ -38,7 +38,7 @@
         <div *ngIf="viewablePhrases">
           <viewable-phrases
             [viewablePhrases]="viewablePhrases"
-            [data]="objectData"
+            [data]="data"
             [workspace]="workspace"
           ></viewable-phrases>
         </div>

@@ -16,8 +16,9 @@ export class HeaderComponent {
   @Input() uploadFileInput: HTMLInputElement;
   @Input() editablePhrases: EditablePhrase[];
   @Output() fileChange: EventEmitter<InputEvent> = new EventEmitter<InputEvent>();
+  @Output() docxFileChanged: EventEmitter<DocxFile> = new EventEmitter<DocxFile>();
 
-  onFileChangeHandler(e: Event) {
+  public onFileChangeHandler(e: Event) {
     const event = e as InputEvent;
     this.fileChange.emit(event);
   }
@@ -34,7 +35,11 @@ export class HeaderComponent {
       modifiedObjects: this.history[this.workspace.historyIndex].editablePhrases,
       fileIn: this.docxFile.content,
     }).then((newDocx) => {
-      // this.setTemplateFromFile(newDocx); TODO
+      this.docxFileChanged.emit({
+        name: this.docxFile.name,
+        content: newDocx,
+        lastModifiedDate: new Date().getTime(),
+      })
     });
   }
 

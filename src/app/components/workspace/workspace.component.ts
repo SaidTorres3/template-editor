@@ -8,7 +8,7 @@ import {
 
 @Component({
   selector:
-    "app-workspace[objectData][workspace][editablePhrases][fileInput][viewablePhrases]",
+    "app-workspace[data][workspace][editablePhrases][fileInput][viewablePhrases]",
   templateUrl: "./workspace.component.html",
   styleUrls: [
     "./workspace.component.less",
@@ -16,7 +16,7 @@ import {
   ],
 })
 export class WorkspaceComponent {
-  @Input() objectData: any;
+  @Input() data: any;
   @Input() workspace: WorkSpace;
   @Input() editablePhrases: EditablePhrase[];
   @Input() fileInput: HTMLButtonElement;

@@ -26,10 +26,11 @@
     [editablePhrases]="editablePhrases"
     [uploadFileInput]="uploadFileInput"
     (fileChange)="setTemplateFromInputEvent($event)"
+    (docxFileChanged)="saveHandler($event)"
   ></app-header>
 
   <app-workspace
-    [objectData]="objectData"
+    [data]="data"
     [workspace]="workspace"
     [editablePhrases]="editablePhrases"
     [fileInput]="uploadFileInput"

@@ -4,7 +4,7 @@ import { Zoom } from "../../../app/shared/zoom-class/Zoom";
 import { EditablePhrase, ViewablePhrase } from "../../../utils/docxParsers/types";
 import * as i0 from "@angular/core";
 export declare class WorkspaceComponent {
-    objectData: any;
+    data: any;
     workspace: WorkSpace;
     editablePhrases: EditablePhrase[];
     fileInput: HTMLButtonElement;
@@ -17,5 +17,5 @@ export declare class WorkspaceComponent {
     onEditablePhraseChanged(e: Event, index: number): void;
     disableEnter(e: KeyboardEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<WorkspaceComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<WorkspaceComponent, "app-workspace[objectData][workspace][editablePhrases][fileInput][viewablePhrases]", never, { "objectData": "objectData"; "workspace": "workspace"; "editablePhrases": "editablePhrases"; "fileInput": "fileInput"; "viewablePhrases": "viewablePhrases"; }, { "editablePhraseChanged": "editablePhraseChanged"; }, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<WorkspaceComponent, "app-workspace[data][workspace][editablePhrases][fileInput][viewablePhrases]", never, { "data": "data"; "workspace": "workspace"; "editablePhrases": "editablePhrases"; "fileInput": "fileInput"; "viewablePhrases": "viewablePhrases"; }, { "editablePhraseChanged": "editablePhraseChanged"; }, never, never>;
 }

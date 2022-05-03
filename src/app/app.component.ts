@@ -1,7 +1,8 @@
-import { Component, ElementRef, Input, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { docxToEditableObjects } from "../utils/docxParsers/docxToEditableObjects";
 import {
   EditablePhrase,
+  InputFileFormat,
   ViewablePhrase,
 } from "../utils/docxParsers/types";
 import { transformEditablePhrasesToViewablePhrases } from "../utils/phrasesParsers/transformEditablePhrasesToViewablePhrases";
@@ -18,7 +19,13 @@ export class AppComponent {
   @ViewChild("uploadFileInput") uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild("templateContainer") templateContainer: ElementRef<HTMLDivElement>;
   
-  @Input() objectData: any;
+  @Input() data: any;
+  @Input() template: InputFileFormat
+  @Output() save: EventEmitter<DocxFile> = new EventEmitter<DocxFile>();
+
+  public saveHandler(docxFile: DocxFile) {
+    this.save.emit(docxFile);
+  }
 
   public editablePhrases: EditablePhrase[] = [];
   public viewablePhrases: ViewablePhrase[] = [];
@@ -44,6 +51,9 @@ export class AppComponent {
   };
 
   ngOnInit() {
+    if(this.template) {
+      this.setTemplateFromFile(this.template as File);
+    }
   }
 
   ngAfterViewInit() {
