@@ -1,4 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { docxToEditableObjects } from "../../utils/docxParsers/docxToEditableObjects";
 import {
   EditablePhrase,
@@ -6,22 +13,37 @@ import {
   ViewablePhrase,
 } from "../../utils/docxParsers/types";
 import { transformEditablePhrasesToViewablePhrases } from "../../utils/phrasesParsers/transformEditablePhrasesToViewablePhrases";
-import { DocxFile, ViewMode, WorkSpace, History, SelectionRange } from "../interfaces";
+import {
+  DocxFile,
+  ViewMode,
+  WorkSpace,
+  History,
+  SelectionRange,
+  TemplateInformation,
+} from "../interfaces";
 import { Zoom } from "../shared/zoom-class/Zoom";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: "template-editor",
   templateUrl: "./template-editor.component.html",
-  styleUrls: ["./template-editor.component.less", "../shared/styles/commonStyles.less"],
+  styleUrls: [
+    "./template-editor.component.less",
+    "../shared/styles/commonStyles.less",
+  ],
 })
 export class AppComponent {
   title = "template-editor";
   @ViewChild("uploadFileInput") uploadFileInput: ElementRef<HTMLInputElement>;
   @ViewChild("templateContainer") templateContainer: ElementRef<HTMLDivElement>;
-  
+
   @Input() data: any;
-  @Input() template: InputFileFormat
+  @Input() template: InputFileFormat;
+  @Input() templateInformation: TemplateInformation;
   @Output() save: EventEmitter<DocxFile> = new EventEmitter<DocxFile>();
+  @Output() updatedTemplateInformation: EventEmitter<
+    TemplateInformation
+  > = new EventEmitter<TemplateInformation>();
 
   public saveHandler(docxFile: DocxFile) {
     this.save.emit(docxFile);
@@ -35,6 +57,7 @@ export class AppComponent {
   public workspace: WorkSpace = {
     dropingFile: false,
     fileDropDown: false,
+    detailsModal: false,
     paperZoom: { value: 1 },
     dataZoom: { value: 1 },
     mode: ViewMode.edit,
@@ -50,9 +73,21 @@ export class AppComponent {
     lastModifiedDate: 0,
   };
 
+  public templateInformationForm: FormGroup = new FormGroup({
+    name: new FormControl(undefined, [Validators.required]),
+    description: new FormControl(undefined, [Validators.required]),
+  });
+
   ngOnInit() {
-    if(this.template) {
+    if (this.template) {
       this.setTemplateFromFile(this.template as File);
+    }
+    
+    if (this.templateInformation) {
+      this.templateInformationForm.setValue({
+        name: this.templateInformation.name,
+        description: this.templateInformation.description,
+      });
     }
   }
 
@@ -136,7 +171,6 @@ export class AppComponent {
     this.updateViewablePhrasesValue();
   }
 
-
   public fileBackdropHandlerListener = () => {
     const initCount = -1;
     let count = initCount;
@@ -189,6 +223,20 @@ export class AppComponent {
       if (this.workspace.paperZoom.value >= 1) {
         this.workspace.paperZoom.value = 0.9;
       }
+    }
+  }
+
+  public hideModals() {
+    this.workspace.detailsModal = false;
+  }
+
+  public updateTemplateInformation() {
+    if (this.templateInformationForm.valid) {
+      this.templateInformation = {
+        name: this.templateInformationForm.value.name,
+        description: this.templateInformationForm.value.description,
+      };
+      this.updatedTemplateInformation.emit(this.templateInformation);
     }
   }
 

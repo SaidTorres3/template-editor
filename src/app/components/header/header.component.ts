@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DocxFile, History, WorkSpace } from "../../../app/interfaces";
-import { docxToString } from "../../../utils/docxParsers/docxToString";
 import { editableObjectToDocx } from "../../../utils/docxParsers/editableObjectsToDocx";
 import { EditablePhrase } from "../../../utils/docxParsers/types";
 
@@ -58,6 +57,10 @@ export class HeaderComponent {
       //   console.log(string);
       // });
     });
+  }
+
+  public openDetailsModal() {
+    this.workspace.detailsModal = true;
   }
 
   public fileDropDownToggle() {

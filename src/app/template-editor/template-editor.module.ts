@@ -17,6 +17,7 @@ import { SelectionRangeDirective } from '../directives/selection-range.directive
 import { CheckVariableExistenceDirective } from '../directives/check-variable-existence.directive';
 import { VariableExistPipe } from '../pipes/variable-exist.pipe';
 import { VariableCheckerComponent } from '../components/workspace/viewable-phrase/variable-checker/variable-checker.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
@@ -41,7 +42,9 @@ import { CommonModule } from '@angular/common';
     VariableCheckerComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   exports: [

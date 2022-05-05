@@ -19,6 +19,38 @@
     </div>
   </div>
 
+  <div
+    class="backdrop-modal"
+    [class.backdrop-modal--hover]="workspace.detailsModal"
+    (click)="hideModals()"
+  >
+    <form
+      class="backdrop-modal__details-modal"
+      (click)="$event.stopPropagation()"
+      [formGroup]="templateInformationForm"
+      (submit)="updateTemplateInformation()"
+    >
+      <p>Nombre del template:</p>
+      <input
+        class="backdrop-modal__details-modal__input"
+        [value]="templateInformation?.name || ''"
+        formControlName="name"
+        nz-input
+        type="text"
+      >
+      <p>Descripción:</p>
+      <textarea
+        class="backdrop-modal__details-modal__input backdrop-modal__details-modal__input--textarea"
+        formControlName="description"
+        nz-input
+      >{{templateInformation?.description}}</textarea>
+      <button
+        class="backdrop-modal__details-modal__save-btn"
+        type="submit"
+      >Guardar</button>
+    </form>
+  </div>
+
   <app-header
     [workspace]="workspace"
     [docxFile]="docxFile"
