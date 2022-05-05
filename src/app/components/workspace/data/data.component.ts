@@ -30,8 +30,6 @@ export class DataComponent implements OnDestroy, AfterViewInit {
   private zoomSuscription: Subscription;
 
   ngAfterViewInit(): void {
-    console.log("testinggg.");
-    console.log(this.data);
     this.zoomSuscription = this.zoom.zoomObserver.subscribe(() => {
       this.updateDataColumnsAmmount();
     });

@@ -1,2 +1,2 @@
-export * from './src/app/app.component';
-export * from './src/app/app.module';
+export * from './src/app/template-editor/template-editor.component';
+export * from './src/app/template-editor/template-editor.module';

@@ -1,7 +1,7 @@
 import { ElementRef, EventEmitter } from "@angular/core";
-import { EditablePhrase, InputFileFormat, ViewablePhrase } from "../utils/docxParsers/types";
-import { DocxFile, WorkSpace, History } from "./interfaces";
-import { Zoom } from "./shared/zoom-class/Zoom";
+import { EditablePhrase, InputFileFormat, ViewablePhrase } from "../../utils/docxParsers/types";
+import { DocxFile, WorkSpace, History } from "../interfaces";
+import { Zoom } from "../shared/zoom-class/Zoom";
 import * as i0 from "@angular/core";
 export declare class AppComponent {
     title: string;

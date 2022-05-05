@@ -6,7 +6,6 @@ export const docxToEditableObjects = async (docxFile: InputFileFormat): Promise<
   const JSZip = typeof JSZipImport === "function" ? JSZipImport : JSZipImport["default"];
   return new Promise((resolve, reject) => {
     // unzip the file
-    console.log(JSZip)
     const zip = new JSZip();
     zip.loadAsync(docxFile).then(function (zip) {
       // get the content of the document.xml file

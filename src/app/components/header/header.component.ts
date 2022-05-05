@@ -27,10 +27,6 @@ export class HeaderComponent {
     if (!this.docxFile.content) {
       return;
     }
-    // update the last modified date 
-    console.log(
-      this.docxFile.content
-    )
     editableObjectToDocx({
       modifiedObjects: this.history[this.workspace.historyIndex].editablePhrases,
       fileIn: this.docxFile.content,
@@ -58,9 +54,9 @@ export class HeaderComponent {
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      docxToString(newDocx).then((string) => {
-        console.log(string);
-      });
+      // docxToString(newDocx).then((string) => {
+      //   console.log(string);
+      // });
     });
   }
 

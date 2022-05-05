@@ -99,7 +99,6 @@ export class TreeNodeComponent {
 
   private replaceArraySymbolToEachSentence(text: string): string {
     const dividedText = text.replace(/[\{\}]/g, "").split(".");
-    console.log(dividedText);
     let posibleResult = "";
     for (let [index, sentence] of dividedText.entries()) {
       const regexToFindLastContentVariable = /}}{{([\w\.]+)}}{{\/each}}/g;
@@ -121,7 +120,6 @@ export class TreeNodeComponent {
           );
         }
       } else if (match && !dividedText[index - 1]?.includes("∀")) {
-        console.log(match[1]);
         posibleResult = posibleResult.replace(
           match[1],
           `${match[1]}.${sentence}`

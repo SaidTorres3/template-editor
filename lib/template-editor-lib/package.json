@@ -1,6 +1,6 @@
 {
   "name": "saidtorres3-template-editor",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "private": false,
   "dependencies": {
     "jszip": "^3.9.1",

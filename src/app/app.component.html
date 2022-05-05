@@ -1,48 +1,8 @@
-<body>
-  <input
-    #uploadFileInput
-    (change)="setTemplateFromInputEvent($event)"
-    class="invisible"
-    type="file"
-    id="template"
-    name="template"
-    accept=".docx"
-    />
+<!DOCTYPE html>
+<html lang="es">
 
-  <div
-    class="backdrop"
-    [class.backdrop--hover]="workspace.dropingFile"
-    (wheel)="$event.preventDefault()"
-  >
-    <div class="backdrop__drop-file-msg">
-      Abrir template
-    </div>
-  </div>
+<div style="height: 100vh;">
+  <template-editor></template-editor>
+</div>
 
-  <app-header
-    [workspace]="workspace"
-    [docxFile]="docxFile"
-    [history]="history"
-    [editablePhrases]="editablePhrases"
-    [uploadFileInput]="uploadFileInput"
-    (fileChange)="setTemplateFromInputEvent($event)"
-    (docxFileChanged)="saveHandler($event)"
-  ></app-header>
-
-  <app-workspace
-    [data]="data"
-    [workspace]="workspace"
-    [editablePhrases]="editablePhrases"
-    [fileInput]="uploadFileInput"
-    [viewablePhrases]="viewablePhrases"
-    style="flex-grow: 1; height: 100%; overflow: auto;"
-    (editablePhraseChanged)="updateEditablePhrase($event.inputEvent, $event.indexOfEditablePhrase)"
-  ></app-workspace>
-
-  <app-footer
-    [workspace]="workspace"
-    (clickEditMode)="!$event.shiftKey ? setMode('edit') : setMode('editView')"
-    (clickViewMode)="!$event.shiftKey ? setMode('view') : setMode('editView')"
-    (clickSimulationMode)="setMode('simulation')"
-  ></app-footer>
-</body>
+</html>
