@@ -35,7 +35,9 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 export class AppComponent {
   title = "template-editor";
   @ViewChild("uploadFileInput") uploadFileInput: ElementRef<HTMLInputElement>;
-  @ViewChild("templateContainer") templateContainer: ElementRef<HTMLDivElement>;
+  @ViewChild("workspaceContainer") workspaceContainer: ElementRef<
+    HTMLDivElement
+  >;
 
   @Input() data: any;
   @Input() template: InputFileFormat;
@@ -82,7 +84,7 @@ export class AppComponent {
     if (this.template) {
       this.setTemplateFromFile(this.template as File);
     }
-    
+
     if (this.templateInformation) {
       this.templateInformationForm.setValue({
         name: this.templateInformation.name,
@@ -237,6 +239,7 @@ export class AppComponent {
         description: this.templateInformationForm.value.description,
       };
       this.updatedTemplateInformation.emit(this.templateInformation);
+      this.hideModals();
     }
   }
 

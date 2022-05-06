@@ -18,8 +18,9 @@ import * as i16 from "../directives/check-variable-existence.directive";
 import * as i17 from "../pipes/variable-exist.pipe";
 import * as i18 from "../components/workspace/viewable-phrase/variable-checker/variable-checker.component";
 import * as i19 from "@angular/common";
+import * as i20 from "@angular/forms";
 export declare class TemplateEditorModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<TemplateEditorModule, never>;
-    static ɵmod: i0.ɵɵNgModuleDeclaration<TemplateEditorModule, [typeof i1.AppComponent, typeof i2.isObject, typeof i3.TreeNodeComponent, typeof i4.HasThesePropsPipe, typeof i5.DoesStringRepresentPrimitivePipe, typeof i6.EntersToBrPipe, typeof i7.ViewablePhraseComponent, typeof i8.IsArrayPipe, typeof i9.FocusDirective, typeof i10.EditablePhraseComponent, typeof i11.DataComponent, typeof i12.HeaderComponent, typeof i13.WorkspaceComponent, typeof i14.FooterComponent, typeof i15.SelectionRangeDirective, typeof i16.CheckVariableExistenceDirective, typeof i17.VariableExistPipe, typeof i18.VariableCheckerComponent], [typeof i19.CommonModule], [typeof i1.AppComponent]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<TemplateEditorModule, [typeof i1.AppComponent, typeof i2.isObject, typeof i3.TreeNodeComponent, typeof i4.HasThesePropsPipe, typeof i5.DoesStringRepresentPrimitivePipe, typeof i6.EntersToBrPipe, typeof i7.ViewablePhraseComponent, typeof i8.IsArrayPipe, typeof i9.FocusDirective, typeof i10.EditablePhraseComponent, typeof i11.DataComponent, typeof i12.HeaderComponent, typeof i13.WorkspaceComponent, typeof i14.FooterComponent, typeof i15.SelectionRangeDirective, typeof i16.CheckVariableExistenceDirective, typeof i17.VariableExistPipe, typeof i18.VariableCheckerComponent], [typeof i19.CommonModule, typeof i20.ReactiveFormsModule, typeof i20.FormsModule], [typeof i1.AppComponent]>;
     static ɵinj: i0.ɵɵInjectorDeclaration<TemplateEditorModule>;
 }

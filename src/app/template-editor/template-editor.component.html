@@ -44,10 +44,19 @@
         formControlName="description"
         nz-input
       >{{templateInformation?.description}}</textarea>
-      <button
-        class="backdrop-modal__details-modal__save-btn"
-        type="submit"
-      >Guardar</button>
+      <div class="backdrop-modal__details-modal__buttons-container">
+        <button
+          class="backdrop-modal__details-modal__buttons-container__btn backdrop-modal__details-modal__buttons-container__btn--save"
+          type="submit"
+        >Guardar</button>
+        <button
+          class="backdrop-modal__details-modal__buttons-container__btn backdrop-modal__details-modal__buttons-container__btn--cancel"
+          (click)="hideModals()"
+          type="button"
+        >
+          Cerrar
+        </button>
+      </div>
     </form>
   </div>
 
@@ -67,6 +76,7 @@
     [editablePhrases]="editablePhrases"
     [fileInput]="uploadFileInput"
     [viewablePhrases]="viewablePhrases"
+    #workspaceContainer
     style="flex-grow: 1; height: 100%; overflow: auto;"
     (editablePhraseChanged)="updateEditablePhrase($event.inputEvent, $event.indexOfEditablePhrase)"
   ></app-workspace>

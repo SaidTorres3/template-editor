@@ -7,6 +7,7 @@ export interface DocxFile {
 export interface WorkSpace {
     dropingFile: boolean;
     fileDropDown: boolean;
+    detailsModal: boolean;
     paperZoom: {
         value: number;
     };
@@ -19,6 +20,10 @@ export interface WorkSpace {
     lastSelection: SelectionRange;
     searchData?: string;
     needToFocus: boolean;
+}
+export interface TemplateInformation {
+    name: string;
+    description: string;
 }
 export interface SelectionRange {
     start: number;

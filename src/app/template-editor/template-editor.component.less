@@ -95,8 +95,8 @@ body {
 }
 
 .backdrop-modal__details-modal__input {
-  width     : 30vw;
-  height    : 5vw;
+  width     : 35vw;
+  height    : 5vh;
   max-height: 40px;
   font-size : 1.5vw;
 }
@@ -108,23 +108,45 @@ body {
   font-size : 1.3vw;
 }
 
-.backdrop-modal__details-modal__save-btn {
-  width           : 10vw;
-  height          : 4vw;
-  font-size       : 1.5vw;
-  border-radius   : 0.8vw;
-  border-style    : solid;
-  border-color    : #fff;
-  border-width    : 2px;
-  background-color: #fff;
-  cursor          : pointer;
-  // blue border
-  border-color    : #00a8ff;
-  transition-duration: 0.2s;
+.backdrop-modal__details-modal__buttons-container {
+  display       : flex;
+  flex-direction: row;
 }
 
-.backdrop-modal__details-modal__save-btn:hover {
+.backdrop-modal__details-modal__buttons-container__btn {
+  width              : 10vw;
+  height             : 4vw;
+  font-size          : 1.5vw;
+  border-radius      : 20px;
+  border-style       : solid;
+  border-width       : 2px;
+  cursor             : pointer;
+  transition-duration: 0.2s;
+  margin-right       : 1vw;
+}
+
+.backdrop-modal__details-modal__buttons-container__btn:last-child {
+  margin-right: 0;
+}
+
+.backdrop-modal__details-modal__buttons-container__btn--save {
+  border-color    : #fff;
+  background-color: #fff;
+  border-color    : #00a8ff;
+}
+
+.backdrop-modal__details-modal__buttons-container__btn--save:hover {
   background-color: #00b9ff;
-  // border green color
   border-color    : #002fff;
+}
+
+.backdrop-modal__details-modal__buttons-container__btn--cancel {
+  border-color    : #fff;
+  background-color: #fff;
+  border-color    : #ff0000;
+}
+
+.backdrop-modal__details-modal__buttons-container__btn--cancel:hover {
+  background-color: #ff0000;
+  border-color    : #ff0000;
 }
