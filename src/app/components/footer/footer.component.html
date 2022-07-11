@@ -1,37 +1,58 @@
 <footer class="status-bar">
   <div class="status-bar__zoom-container">
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomOut(workspace.dataZoom)">
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomOut(workspace.dataZoom)"
+    >
       -
     </div>
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomNormal(workspace.dataZoom)">
-      {{workspace.dataZoom.value * 100 | number}}%
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomNormal(workspace.dataZoom)"
+    >
+      {{ workspace.dataZoom.value * 100 | number }}%
     </div>
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomIn(workspace.dataZoom)">
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomIn(workspace.dataZoom)"
+    >
       +
     </div>
   </div>
 
   <div class="status-bar__mode-container">
-    <div class="status-bar__mode-container__item" style="cursor: default;">
+    <div class="status-bar__mode-container__item" style="cursor: default">
       Modo:
     </div>
     <div
       class="status-bar__mode-container__item"
-      [class]="workspace.mode==='edit'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
+      [class]="
+        workspace.mode === 'edit' || workspace.mode === 'editView'
+          ? 'status-bar__mode-container__item--selected'
+          : undefined
+      "
       (click)="onClickEditMode($event)"
     >
       Edición
     </div>
     <div
       class="status-bar__mode-container__item"
-      [class]="workspace.mode==='view'||workspace.mode==='editView' ? 'status-bar__mode-container__item--selected' : undefined"
+      [class]="
+        workspace.mode === 'view' || workspace.mode === 'editView'
+          ? 'status-bar__mode-container__item--selected'
+          : undefined
+      "
       (click)="onClickViewMode($event)"
     >
       Vista
     </div>
     <div
       class="status-bar__mode-container__item"
-      [class]="workspace.mode==='simulation' ? 'status-bar__mode-container__item--selected' : undefined"
+      [class]="
+        workspace.mode === 'simulation'
+          ? 'status-bar__mode-container__item--selected'
+          : undefined
+      "
       (click)="onClickSimulationMode($event)"
     >
       Simulación
@@ -39,13 +60,22 @@
   </div>
 
   <div class="status-bar__zoom-container status-bar__zoom-container--right">
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomOut(workspace.paperZoom)">
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomOut(workspace.paperZoom)"
+    >
       -
     </div>
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomNormal(workspace.paperZoom)">
-      {{workspace.paperZoom.value * 100 | number}}%
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomNormal(workspace.paperZoom)"
+    >
+      {{ workspace.paperZoom.value * 100 | number }}%
     </div>
-    <div class="status-bar__zoom-container__element" (click)="zoom.zoomIn(workspace.paperZoom)">
+    <div
+      class="status-bar__zoom-container__element"
+      (click)="zoom.zoomIn(workspace.paperZoom)"
+    >
       +
     </div>
   </div>

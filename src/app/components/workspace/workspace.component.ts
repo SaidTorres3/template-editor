@@ -1,18 +1,18 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { WorkSpace } from "../../../app/interfaces";
-import { Zoom } from "../../../app/shared/zoom-class/Zoom";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { WorkSpace } from '../../../app/interfaces';
+import { Zoom } from '../../../app/shared/zoom-class/Zoom';
 import {
   EditablePhrase,
   ViewablePhrase,
-} from "../../../utils/docxParsers/types";
+} from '../../../utils/docxParsers/types';
 
 @Component({
   selector:
-    "app-workspace[data][workspace][editablePhrases][fileInput][viewablePhrases]",
-  templateUrl: "./workspace.component.html",
+    'app-workspace[data][workspace][editablePhrases][fileInput][viewablePhrases]',
+  templateUrl: './workspace.component.html',
   styleUrls: [
-    "./workspace.component.less",
-    "../../shared/styles/commonStyles.less",
+    './workspace.component.less',
+    '../../shared/styles/commonStyles.less',
   ],
 })
 export class WorkspaceComponent {
@@ -37,7 +37,7 @@ export class WorkspaceComponent {
   }
 
   public disableEnter(e: KeyboardEvent) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
     }
   }

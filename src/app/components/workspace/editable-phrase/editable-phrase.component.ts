@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { WorkSpace } from "../../../../app/interfaces";
-import { EditablePhrase } from "../../../../utils/docxParsers/types";
-import { addStr } from "../../../../utils/javascript/addString";
-import { replaceStr } from "../../../../utils/javascript/replaceString";
-import { setCaretPosition } from "../../../../utils/javascript/setCaretPosition";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { WorkSpace } from '../../../../app/interfaces';
+import { EditablePhrase } from '../../../../utils/docxParsers/types';
+import { addStr } from '../../../../utils/javascript/addString';
+import { replaceStr } from '../../../../utils/javascript/replaceString';
+import { setCaretPosition } from '../../../../utils/javascript/setCaretPosition';
 
 @Component({
-  selector: "editable-phrases[editablePhrases][workspace]",
-  templateUrl: "./editable-phrase.component.html",
-  styleUrls: ["./editable-phrase.component.less"],
+  selector: 'editable-phrases[editablePhrases][workspace]',
+  templateUrl: './editable-phrase.component.html',
+  styleUrls: ['./editable-phrase.component.less'],
 })
 export class EditablePhraseComponent {
   constructor() {}
@@ -25,12 +25,13 @@ export class EditablePhraseComponent {
     e.preventDefault();
     const element = e.target as HTMLElement;
     let editablePhraseValue = element.innerText;
-    let text = e.clipboardData.getData("text/plain")?.replace(/\n/g, " ");
+    let text = e.clipboardData.getData('text/plain')?.replace(/\n/g, ' ');
     const selection = window.getSelection();
     const caretFirstPosition = selection.anchorOffset;
     const caretLastPosition = selection.focusOffset;
     let newTxt: string;
-    if (caretFirstPosition === caretLastPosition) { // if caret is in the same position
+    if (caretFirstPosition === caretLastPosition) {
+      // if caret is in the same position
       newTxt = addStr({
         string: editablePhraseValue,
         index: caretFirstPosition,
@@ -46,7 +47,7 @@ export class EditablePhraseComponent {
       });
     }
     // create input event
-    var event = new Event("input", {
+    var event = new Event('input', {
       bubbles: true,
       cancelable: true,
     });

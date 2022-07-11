@@ -5,26 +5,26 @@ import {
   Input,
   OnDestroy,
   ViewChild,
-} from "@angular/core";
-import { Subscription } from "rxjs";
-import { WorkSpace } from "../../../../app/interfaces";
-import { Zoom } from "../../../../app/shared/zoom-class/Zoom";
+} from '@angular/core';
+import { Subscription } from 'rxjs';
+import { WorkSpace } from '../../../../app/interfaces';
+import { Zoom } from '../../../../app/shared/zoom-class/Zoom';
 
 @Component({
-  selector: "workspace-data",
-  templateUrl: "./data.component.html",
+  selector: 'workspace-data',
+  templateUrl: './data.component.html',
   styleUrls: [
-    "./data.component.less",
-    "../../../shared/styles/commonStyles.less",
+    './data.component.less',
+    '../../../shared/styles/commonStyles.less',
   ],
 })
 export class DataComponent implements OnDestroy, AfterViewInit {
   @Input() data: any;
   @Input() workspace: WorkSpace;
 
-  @ViewChild("dataElement") dataElement: ElementRef<HTMLDivElement>;
-  @ViewChild("dataContainer") dataContainer: ElementRef<HTMLDivElement>;
-  @ViewChild("dataContainerData") dataContainerData: ElementRef<HTMLDivElement>;
+  @ViewChild('dataElement') dataElement: ElementRef<HTMLDivElement>;
+  @ViewChild('dataContainer') dataContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('dataContainerData') dataContainerData: ElementRef<HTMLDivElement>;
 
   public zoom: Zoom = new Zoom();
   private zoomSuscription: Subscription;
@@ -70,21 +70,21 @@ export class DataComponent implements OnDestroy, AfterViewInit {
     if (this.dataContainerData) {
       if (newWidth > 1700) {
         this.dataContainerData.nativeElement.classList.add(
-          "workspace__data__data-container__data--three-columns"
+          'workspace__data__data-container__data--three-columns'
         );
       } else if (newWidth > 1000) {
         this.dataContainerData.nativeElement.classList.remove(
-          "workspace__data__data-container__data--three-columns"
+          'workspace__data__data-container__data--three-columns'
         );
         this.dataContainerData.nativeElement.classList.add(
-          "workspace__data__data-container__data--two-columns"
+          'workspace__data__data-container__data--two-columns'
         );
       } else if (newWidth < 1000) {
         this.dataContainerData.nativeElement.classList.remove(
-          "workspace__data__data-container__data--three-columns"
+          'workspace__data__data-container__data--three-columns'
         );
         this.dataContainerData.nativeElement.classList.remove(
-          "workspace__data__data-container__data--two-columns"
+          'workspace__data__data-container__data--two-columns'
         );
       }
     }

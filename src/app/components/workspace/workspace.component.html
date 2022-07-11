@@ -12,12 +12,17 @@
     </div>
     <div
       class="workspace__template__paper-container"
-      [ngStyle]="{'zoom': workspace.paperZoom.value}"
-      [class.workspace__template__paper-container--double-paper]="workspace.mode === 'editView'"
+      [ngStyle]="{ zoom: workspace.paperZoom.value }"
+      [class.workspace__template__paper-container--double-paper]="
+        workspace.mode === 'editView'
+      "
     >
       <div
         #paper
-        *ngIf="(workspace.mode === 'edit' || workspace.mode === 'editView') && editablePhrases.length"
+        *ngIf="
+          (workspace.mode === 'edit' || workspace.mode === 'editView') &&
+          editablePhrases.length
+        "
         class="workspace__template__paper-container__paper"
         (keypress)="disableEnter($event)"
       >
@@ -25,13 +30,18 @@
           <editable-phrases
             [editablePhrases]="editablePhrases"
             [workspace]="workspace"
-            (editablePhraseChanged)="onEditablePhraseChanged($event.inputEvent, $event.index)"
+            (editablePhraseChanged)="
+              onEditablePhraseChanged($event.inputEvent, $event.index)
+            "
           ></editable-phrases>
         </div>
       </div>
       <div
         #paper
-        *ngIf="(workspace.mode === 'view' || workspace.mode === 'editView') && editablePhrases.length"
+        *ngIf="
+          (workspace.mode === 'view' || workspace.mode === 'editView') &&
+          editablePhrases.length
+        "
         class="workspace__template__paper-container__paper"
         (keypress)="disableEnter($event)"
       >
