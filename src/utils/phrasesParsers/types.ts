@@ -6,8 +6,8 @@ export interface FindTagsOpts {
 }
 
 export interface Tag {
-  startTag: string;
-  closeTag: string;
+  startTag: RegExp;
+  closeTag: RegExp;
   type: ViewablePhraseType;
   priority: number;
 }

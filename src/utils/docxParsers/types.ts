@@ -11,6 +11,7 @@ export enum ViewablePhraseType {
   handlebar = 'handlebar',
   if = 'if',
   each = 'each',
+  ifNot = 'ifNot',
 }
 
 export interface EditablePhrase {
